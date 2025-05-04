@@ -6,6 +6,7 @@
 # MAGIC - In this Lab folder, you will find five main notebooks prefixed with `0#_{}` e.g. `01--05_{}`. You can review and test them out and/or use them as reference. Accompanying them is a **`./utils.py`** file which includes _**`helper-functions`**_ that will be used within the notebooks to ease the walkthrough without overburdening the eyes with code. We also included `[Example] AI Gateway Dashboard` for easier jumpstart. Additional assets are also found in `./imgs`, `./gif`.
 # MAGIC - As you follow along the **AI-Gateway Lab Overview**, you will be guided with options to use the _User Interface_ (**UI**) or to programmatically use the example code provided in the **Notebooks** to create and update Foundational **Model Serving** endpoint(s) and enable various aspect of the **AI Gateway**. You are welcome to start with the UI before moving onto the code, to first familiarize yourself with the Serving endpoints API.  
 # MAGIC - When you are done testing you can use notebook [**`06_AIGateway_Lab_Cleanup`**]($./06_AIGateway_Lab_Cleanup) to remove the endpoint(s) and corresponding payload table(s) or manually delete the assets to prevent unwanted costs.
+# MAGIC
 # MAGIC ----------     
 
 # COMMAND ----------
