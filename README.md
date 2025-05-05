@@ -1,8 +1,7 @@
 # Databricks Workshops
 
-```
 This repository contains a collection of Databricks workshops designed for direct implementation. Each workshop provides hands-on, step-by-step guidance for specific data engineering, analytics, or machine learning tasks within Databricks. The content is modular and ready to use, helping teams accelerate solution development and learning.
-```
+
 
 ## How to get help
 
