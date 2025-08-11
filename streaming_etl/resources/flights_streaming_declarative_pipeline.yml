@@ -1,0 +1,22 @@
+resources:
+  pipelines:
+    flights_streaming_ldp:
+      name: flights_streaming_ldp_${bundle.target}
+      configuration:
+        source_catalog: ${var.catalog}
+        source_schema: ${var.schema}
+      libraries:
+        - glob:
+            include: ../2_declarative_pipeline/flights_streaming_pipeline/transformations/**
+      catalog: ${var.catalog}
+      schema: ${var.ldp_schema}
+      continuous: false
+      development: true
+      photon: true
+      channel: CURRENT
+      serverless: true
+      event_log:
+        name: eventlog_flights_streaming_ldp_${bundle.target}
+        catalog: ${var.catalog}
+        schema: ${var.ldp_schema}
+      root_path: ../2_declarative_pipeline/flights_streaming_pipeline

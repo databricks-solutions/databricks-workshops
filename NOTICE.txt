@@ -1,0 +1,14 @@
+Copyright (2024) Databricks, Inc.
+This Software includes software developed at Databricks (https://www.databricks.com/) and its use is subject to the included LICENSE file.
+
+_____________
+This Software contains code from the following open source projects, licensed under the MIT License:
+
+pytest-dev/pytest - https://github.com/pytest-dev/pytest
+Copyright (c) 2004 Holger Krekel and others
+
+________________
+This Software contains code from the following open source projects, licensed under the Apache License 2.0:
+
+dbt-labs/dbt-core
+Copyright 2021 dbt Labs, Inc.
