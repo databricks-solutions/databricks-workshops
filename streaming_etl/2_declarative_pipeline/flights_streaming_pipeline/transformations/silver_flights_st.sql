@@ -39,7 +39,7 @@ CREATE STREAMING TABLE flights_silver  (
   IsDepDelayed STRING,
   created_timestamp TIMESTAMP)
 CLUSTER BY (FlightKey)
-TBLPROPERTIES ('delta.enableDeletionVectors' = true, 'delta.enableRowTracking' = false)
+TBLPROPERTIES ('delta.enableDeletionVectors' = true, 'delta.enableRowTracking' = true)
 AS 
 WITH flights_cleaned as (
  SELECT

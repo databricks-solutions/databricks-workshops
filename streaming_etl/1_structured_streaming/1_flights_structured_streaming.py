@@ -59,6 +59,7 @@ if reset_all_data:
     spark.sql(f"DROP TABLE IF EXISTS {bronze_table_name}")
 
     dbutils.fs.rm(bronze_checkpoint_location, True)
+    dbutils.fs.rm(silver_checkpoint_location, True)
     dbutils.fs.rm(fact_flight_checkpoint_location, True)
     print("Refresh All completed")
 
