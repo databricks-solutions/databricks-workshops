@@ -4,7 +4,7 @@ reset_all_data = dbutils.widgets.get("reset_all_data") == "true"
 dbutils.widgets.dropdown("size", "small", ["x-small", "small", "medium", "large"], "Size of data volume to load")
 data_size = dbutils.widgets.get("size")
 dbutils.widgets.dropdown("load_type", "files", ["files", "generate"], "Load from sample dataset files or generate additional data.")
-load_type = dbutils.widgets.get("files")
+load_type = dbutils.widgets.get("load_type")
 
 # COMMAND ----------
 
