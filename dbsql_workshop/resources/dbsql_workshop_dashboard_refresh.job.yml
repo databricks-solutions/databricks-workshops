@@ -1,0 +1,18 @@
+# Daily dashboard refresh on the bundle's warehouse. Development-mode deployments keep the schedule paused,
+# so the warehouse only starts when someone uses the demo; resume the schedule to refresh at 1 AM New York time.
+resources:
+  jobs:
+    dbsql_workshop_dashboard_refresh:
+      name: Bean & Brew - Refresh store operations dashboard
+      max_concurrent_runs: 1
+      tags:
+        workshop: dbsql_workshop
+        aidevkit_project: ai-dev-kit
+      schedule:
+        quartz_cron_expression: "0 0 1 * * ?"
+        timezone_id: America/New_York
+      tasks:
+        - task_key: refresh_dashboard
+          dashboard_task:
+            dashboard_id: ${resources.dashboards.dbsql_workshop_store_operations.id}
+            warehouse_id: ${var.warehouse_id}

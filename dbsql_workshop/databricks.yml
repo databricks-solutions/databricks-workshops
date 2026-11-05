@@ -1,0 +1,48 @@
+# Bean & Brew Coffee Co. - Databricks SQL workshop in a box.
+#
+# Deploy builds everything: a SQL warehouse, three schemas of generated data with metric views, the AI/BI
+# dashboard, the Genie agent, SQL alerts, saved queries and a visual data prep flow. Destroy removes all of it.
+# Every name carries "dbsql_workshop" and the deploying user, so nothing that already exists is overwritten.
+# See README.md.
+bundle:
+  name: dbsql_workshop
+  # job_runs (the build that runs during deploy) needs Databricks CLI 1.7.0 or later
+  databricks_cli_version: ">= 1.7.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: >-
+      Existing Unity Catalog catalog for the demo. The bundle creates (and destroy drops) only its own three
+      schemas in it; the catalog itself is never changed. Defaults to `workspace`, the default catalog of new workspaces.
+    default: workspace
+  warehouse_id:
+    description: SQL warehouse for the dashboard, Genie agent, alerts and saved queries. Defaults to the warehouse this bundle creates.
+    default: ${resources.sql_warehouses.dbsql_workshop_warehouse.id}
+  llm_endpoint:
+    description: Pay-per-token model endpoint that ai_query() calls in saved query 08.
+    default: databricks-meta-llama-3-3-70b-instruct
+  alert_email:
+    description: Subscriber for the three SQL alerts.
+    default: ${workspace.current_user.userName}
+
+# Scope every name by user: schemas become dbsql_workshop_<user>_bronze|silver|gold and
+# workspace assets "[dbsql_workshop <user>] ...".
+presets:
+  name_prefix: "[dbsql_workshop ${workspace.current_user.short_name}] "
+
+targets:
+  dev:
+    # Default target, used by Open in Databricks. No host: it deploys to the workspace it is opened in.
+    mode: development
+    default: true
+
+  fevm:
+    # Base deployment workspace for the workshop team
+    mode: development
+    workspace:
+      host: https://fevm-for-startups-demos.cloud.databricks.com
+    variables:
+      catalog: for_startups_demos_catalog
