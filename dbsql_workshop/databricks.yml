@@ -1,12 +1,13 @@
 # Bean & Brew Coffee Co. - Databricks SQL workshop in a box.
 #
-# Deploy builds everything: a SQL warehouse, three schemas of generated data with metric views, the AI/BI
-# dashboard, the Genie agent, SQL alerts, saved queries and a visual data prep flow. Destroy removes all of it.
-# Every name carries "dbsql_workshop" and the deploying user, so nothing that already exists is overwritten.
-# See README.md.
+# Deploy sets up the workshop: a SQL warehouse, three schemas and the raw (bronze) data. The interactive notebook
+# "Bean & Brew DBSQL Workshop.ipynb" builds the rest: silver, gold, metric views, governance, saved queries, the visual
+# data prep flow, the AI/BI dashboard, the Genie agent and SQL alerts, all inside the schemas or the bundle's own folder.
+# Destroy removes all of it. Every name carries "dbsql_workshop" and the deploying user, so nothing that already
+# exists is overwritten. See README.md.
 bundle:
   name: dbsql_workshop
-  # job_runs (the build that runs during deploy) needs Databricks CLI 1.7.0 or later
+  # job_runs (the raw data load that runs during deploy) needs Databricks CLI 1.7.0 or later
   databricks_cli_version: ">= 1.7.0"
 
 include:
@@ -19,7 +20,9 @@ variables:
       schemas in it; the catalog itself is never changed. Defaults to `workspace`, the default catalog of new workspaces.
     default: workspace
   warehouse_id:
-    description: SQL warehouse for the dashboard, Genie agent, alerts and saved queries. Defaults to the warehouse this bundle creates.
+    description: >-
+      SQL warehouse for the raw data load and for the dashboard, Genie agent, alerts and saved queries the notebook
+      creates. Defaults to the warehouse this bundle creates.
     default: ${resources.sql_warehouses.dbsql_workshop_warehouse.id}
   llm_endpoint:
     description: Pay-per-token model endpoint that ai_query() calls in saved query 08.
@@ -29,7 +32,7 @@ variables:
     default: ${workspace.current_user.userName}
 
 # Scope every name by user: schemas become dbsql_workshop_<user>_bronze|silver|gold and
-# workspace assets "[dbsql_workshop <user>] ...".
+# workspace assets "[dbsql_workshop <user>] ..." (the notebook uses the same prefix for the assets it creates).
 presets:
   name_prefix: "[dbsql_workshop ${workspace.current_user.short_name}] "
 

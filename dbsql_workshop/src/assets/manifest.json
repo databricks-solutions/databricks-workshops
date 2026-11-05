@@ -15,7 +15,7 @@
       "08c",
       "09"
     ],
-    "description": "11-statement live walkthrough script"
+    "description": "11-statement live demo script"
   },
   "saved_queries": [
     {
@@ -87,5 +87,19 @@
   "flow": {
     "name": "Loyalty Promo Target List Prep.designer.ipynb",
     "file": "loyalty_promo_target_list_prep.designer.json"
+  },
+  "dashboard": {
+    "key": "dashboard",
+    "name": "Bean & Brew Coffee Co - Store Operations",
+    "file": "store_operations.dashboard.json"
+  },
+  "genie": {
+    "key": "genie",
+    "title": "Bean & Brew Coffee Ops Genie",
+    "description": "Bean & Brew Coffee Co. operations intelligence agent for store managers, regional leads, and the ops team. Answers questions about store sales performance, product mix, traffic patterns, inventory status, labor efficiency, and loyalty program metrics across all 12 Bean & Brew locations.",
+    "file": "coffee_ops.genie.json"
+  },
+  "alerts": {
+    "file": "alerts.json"
   }
 }

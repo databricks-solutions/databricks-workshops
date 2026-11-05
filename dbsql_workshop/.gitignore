@@ -2,3 +2,6 @@
 
 # Presenter-only material: never commit, never deploy (bundle sync skips gitignored files)
 presenter/
+
+# Python bytecode
+__pycache__/
