@@ -2,13 +2,11 @@
 
 This directory contains the assets for the Vibe-to-Value (V2V) workshop.
 
-> **Status:** Work in progress. The workshop notebooks are not in this directory yet.
-
 ## Contents
 
 | Asset | Description |
 |-------|-------------|
-| _TBD_ | Workshop notebooks will be added here. |
+| `Vibing_to_Value_Seattle.py` | Guide for the hands-on build day in the Databricks Seattle office on 11/17/26. It contains the session slides and the build prompts for three tracks: Retail, Field Service, and Helpdesk. |
 
 ## How to get help
 
