@@ -1,0 +1,28 @@
+# Medallion schemas. The name prefix turns "bronze" into dbsql_workshop_<user>_bronze.
+# The bundle creates them (a schema that already exists makes the deploy fail rather than be reused) and
+# destroy drops them with every table and metric view inside.
+resources:
+  schemas:
+    dbsql_workshop_bronze:
+      name: bronze
+      catalog_name: ${var.catalog}
+      comment: Raw landing zone for Bean & Brew Coffee Co. POS, inventory, and store master data.
+      # The bundle's settings for the workshop notebook, which reads them here instead of asking for input
+      properties:
+        dbsql_workshop.silver_schema: ${resources.schemas.dbsql_workshop_silver.name}
+        dbsql_workshop.gold_schema: ${resources.schemas.dbsql_workshop_gold.name}
+        dbsql_workshop.warehouse_id: ${var.warehouse_id}
+        dbsql_workshop.llm_endpoint: ${var.llm_endpoint}
+        dbsql_workshop.alert_email: ${var.alert_email}
+        # Name prefix for the notebook's workspace assets (stored without its trailing space)
+        dbsql_workshop.asset_prefix: "[dbsql_workshop ${workspace.current_user.short_name}]"
+        # Inside the bundle's own folder, so destroy deletes every asset the notebook creates
+        dbsql_workshop.assets_folder: ${workspace.root_path}/assets
+    dbsql_workshop_silver:
+      name: silver
+      catalog_name: ${var.catalog}
+      comment: Cleaned, conformed, and deduplicated Bean & Brew Coffee Co. data.
+    dbsql_workshop_gold:
+      name: gold
+      catalog_name: ${var.catalog}
+      comment: Business-ready Bean & Brew Coffee Co. aggregates and semantic metric views for BI, Genie, and alerts.
