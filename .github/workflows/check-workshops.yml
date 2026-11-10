@@ -1,0 +1,48 @@
+# Checks every workshop against CONTRIBUTING.md on each pull request and on main.
+# To make it block merges, a repository admin adds the "static checks" job as a required status check on main.
+name: Check workshops
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    name: static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml==6.0.2
+      - run: python scripts/check_workshops.py
+
+  # Validates each bundle against a real workspace (it resolves the warehouse lookup). Runs only once a repository
+  # admin sets the DATABRICKS_HOST variable and the DATABRICKS_CLIENT_ID / DATABRICKS_CLIENT_SECRET secrets of a
+  # service principal in a test workspace.
+  validate:
+    name: bundle validate
+    if: vars.DATABRICKS_HOST != ''
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: databricks/setup-cli@v1.24.0
+      - name: Validate every bundle
+        run: |
+          status=0
+          for bundle in */databricks.yml; do
+            dir=$(dirname "$bundle")
+            echo "::group::$dir"
+            (cd "$dir" && databricks bundle validate) || status=1
+            echo "::endgroup::"
+          done
+          exit $status
