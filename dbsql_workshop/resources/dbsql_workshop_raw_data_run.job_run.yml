@@ -1,9 +1,0 @@
-# Runs the raw data job as part of every deploy that changes it. The deploy waits for the run and fails if it fails.
-resources:
-  job_runs:
-    dbsql_workshop_raw_data_run:
-      job_id: ${resources.jobs.dbsql_workshop_raw_data.id}
-      lifecycle:
-        # Re-run when the raw data notebook changes. A failed run is retried on the next deploy.
-        triggers:
-          - on_file_change: ../src/load_raw_data.ipynb

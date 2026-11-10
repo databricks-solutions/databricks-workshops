@@ -1,0 +1,31 @@
+# Setup: loads the raw (bronze) tables, then creates the silver and gold tables empty plus the metric views.
+# Pure SQL on the SQL warehouse, which starts in seconds. The job run below runs it during every deploy that changes
+# the setup notebooks, and the deploy waits for it.
+resources:
+  jobs:
+    dbsql_workshop_setup:
+      name: Bean & Brew - Set up demo data
+      description: Loads the Bean & Brew raw data and creates the empty silver and gold tables and the metric views.
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+      lifecycle:
+        # The setup notebooks name the schemas directly. Waiting for them also means a second deploy into the same
+        # workspace fails on the existing schemas before it creates anything else.
+        depends_on:
+          - resource: schemas.dbsql_workshop_bronze
+          - resource: schemas.dbsql_workshop_silver
+          - resource: schemas.dbsql_workshop_gold
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+      tasks:
+        - task_key: load_raw_data
+          notebook_task:
+            notebook_path: ../src/setup/01_load_raw_data.sql
+            warehouse_id: ${var.warehouse_id}
+        - task_key: create_tables
+          depends_on:
+            - task_key: load_raw_data
+          notebook_task:
+            notebook_path: ../src/setup/02_create_tables.sql
+            warehouse_id: ${var.warehouse_id}

@@ -1,0 +1,100 @@
+# SQL alerts: weekly (Monday 8 AM America/New_York) on the Starter warehouse, created paused.
+resources:
+  alerts:
+    dbsql_workshop_alert_inventory:
+      display_name: "Bean & Brew - Inventory Items Below Reorder Point"
+      warehouse_id: ${var.warehouse_id}
+      query_text: |
+        SELECT count(*) AS items_to_reorder
+        FROM ${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.inventory_current_status
+        WHERE stock_status = 'REORDER NOW'
+      evaluation:
+        source:
+          name: items_to_reorder
+          display: items_to_reorder
+        comparison_operator: GREATER_THAN
+        threshold:
+          value:
+            double_value: 0.0
+        notification:
+          notify_on_ok: true
+          retrigger_seconds: 0
+          subscriptions:
+            - user_email: ${var.alert_email}
+      schedule:
+        quartz_cron_schedule: "0 0 8 ? * MON"
+        timezone_id: America/New_York
+        pause_status: PAUSED
+      lifecycle:
+        # Created after the setup run, which creates the (empty) tables they read
+        depends_on:
+          - resource: job_runs.dbsql_workshop_setup_run
+    dbsql_workshop_alert_traffic:
+      display_name: "Bean & Brew - Store Traffic Drop vs Prior 4 Weeks"
+      warehouse_id: ${var.warehouse_id}
+      query_text: |
+        WITH mx AS (SELECT max(business_date) AS d FROM ${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.store_daily_performance),
+        s AS (
+          SELECT p.store_id,
+            avg(CASE WHEN p.business_date > mx.d - INTERVAL 7 DAYS THEN p.transactions END) AS last_7d_avg,
+            avg(CASE WHEN p.business_date <= mx.d - INTERVAL 7 DAYS AND p.business_date > mx.d - INTERVAL 35 DAYS THEN p.transactions END) AS prior_28d_avg
+          FROM ${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.store_daily_performance p CROSS JOIN mx
+          GROUP BY p.store_id)
+        SELECT round(min(last_7d_avg / prior_28d_avg - 1), 3) AS worst_traffic_change_pct,
+               min_by(store_id, last_7d_avg / prior_28d_avg) AS worst_store_id
+        FROM s
+      evaluation:
+        source:
+          name: worst_traffic_change_pct
+          display: worst_traffic_change_pct
+        comparison_operator: LESS_THAN
+        threshold:
+          value:
+            double_value: -0.25
+        notification:
+          notify_on_ok: true
+          retrigger_seconds: 0
+          subscriptions:
+            - user_email: ${var.alert_email}
+      schedule:
+        quartz_cron_schedule: "0 0 8 ? * MON"
+        timezone_id: America/New_York
+        pause_status: PAUSED
+      lifecycle:
+        # Created after the setup run, which creates the (empty) tables they read
+        depends_on:
+          - resource: job_runs.dbsql_workshop_setup_run
+    dbsql_workshop_alert_labor:
+      display_name: "Bean & Brew - Labor Cost % Above 30% Target"
+      warehouse_id: ${var.warehouse_id}
+      query_text: |
+        WITH mx AS (SELECT max(business_date) AS d FROM ${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.store_daily_performance),
+        s AS (
+          SELECT p.store_id, sum(p.labor_cost) / sum(p.net_sales) AS labor_cost_pct
+          FROM ${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.store_daily_performance p CROSS JOIN mx
+          WHERE p.business_date > mx.d - INTERVAL 7 DAYS
+          GROUP BY p.store_id)
+        SELECT count_if(labor_cost_pct > 0.30) AS stores_over_labor_target,
+               round(max(labor_cost_pct), 4) AS max_labor_cost_pct
+        FROM s
+      evaluation:
+        source:
+          name: stores_over_labor_target
+          display: stores_over_labor_target
+        comparison_operator: GREATER_THAN
+        threshold:
+          value:
+            double_value: 0.0
+        notification:
+          notify_on_ok: true
+          retrigger_seconds: 0
+          subscriptions:
+            - user_email: ${var.alert_email}
+      schedule:
+        quartz_cron_schedule: "0 0 8 ? * MON"
+        timezone_id: America/New_York
+        pause_status: PAUSED
+      lifecycle:
+        # Created after the setup run, which creates the (empty) tables they read
+        depends_on:
+          - resource: job_runs.dbsql_workshop_setup_run
