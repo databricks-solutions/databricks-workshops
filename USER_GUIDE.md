@@ -41,6 +41,12 @@ workshop in this repository.
 - **One copy per workspace:** each workshop uses fixed names, so a workspace holds one copy of it. A second deploy in
   the same workspace fails without creating anything. Different workshops can run side by side.
 
+## Workshops that need more than Free Edition
+
+- [geniecode_biopharma_rnd](geniecode_biopharma_rnd/README.md): a lab workspace with Genesis Workbench (GPU model
+  serving and its app), serverless GPU, the lab's data in `main` and `dbacademy`, Lakebase, and Genie Code with the
+  Vital Skills. It deploys nothing; see its README for what each exercise creates and how to clean up.
+
 ## Common errors
 
 | Error | Cause | Fix |
