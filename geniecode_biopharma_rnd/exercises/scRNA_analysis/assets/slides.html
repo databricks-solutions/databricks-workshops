@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en" data-od-deck-protocol="1"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>10 Memory B-Cell States in Healthy Pediatric Tonsil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    /* ===========================================================
+       Deck framework — DO NOT EDIT the rules in this \3c style> block.
+       Edit only inside the second \3c style> block below (per-deck
+       styles) and inside <section class="slide"> bodies.
+
+       Contract this framework provides:
+         - 1920×1080 fixed canvas, scaled to fit the viewport
+         - Only .slide.active is visible at a time
+         - Programmatic prev/next + counter elements kept outside the scaled
+           stage but hidden by default so the host can render the UI chrome
+         - OD Deck Protocol v1 absolute navigation + state events
+         - Keyboard (← → space PgUp PgDn Home End R), half-slide click, and stored
+           position survive iframe focus quirks
+         - "Save as PDF" produces a multi-page vertical PDF, one slide
+           per page, by toggling every slide visible under @media print
+       =========================================================== */
+    :root {
+      --bg: #ffffff;
+      --fg: #1b3139;
+      --muted: #1b5162;
+      --accent: #ff3621;
+      --surface: #f9f7f4;
+      --shell: #1b3139;
+      --border: #dce0e2;
+      --success: #00a972;
+      --font-display: "DM Sans", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--shell);
+      color: var(--fg);
+      font: 18px/1.5 -apple-system, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .deck-shell { position: fixed; inset: 0; overflow: hidden; }
+    .deck-stage {
+      width: 1920px; height: 1080px; background: var(--bg); position: relative;
+      transform-origin: top left; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    }
+    .slide { position: absolute; inset: 0; overflow: hidden; }
+    .slide:not(.active) { display: none !important; }
+    :where(.slide.active) { display: flex; flex-direction: column; }
+    .deck-counter {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: none;
+      align-items: center; gap: 4px; background: rgba(10, 14, 26, 0.92);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 6px;
+      border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08); color: #fff;
+      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.18em; z-index: 1000;
+    }
+    .deck-counter button {
+      width: 36px; height: 36px; background: transparent; color: #fff; border: 0;
+      border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; display: grid;
+      place-items: center; transition: background 0.15s;
+    }
+    .deck-counter button:hover { background: rgba(255, 255, 255, 0.12); }
+    .deck-counter button[disabled] { opacity: 0.3; cursor: default; }
+    .deck-counter .deck-count { padding: 0 14px; letter-spacing: 0.22em; }
+    .deck-counter .deck-count .total { color: rgba(255, 255, 255, 0.5); }
+    .deck-hint {
+      position: fixed; bottom: 26px; right: 28px; color: rgba(255, 255, 255, 0.4);
+      font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.2em;
+      text-transform: uppercase; z-index: 999; pointer-events: none; display: none;
+    }
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      html, body { width: 1920px !important; height: auto !important; overflow: visible !important; background: #fff !important; }
+      .deck-shell { position: static !important; display: block !important; inset: auto !important; }
+      .deck-stage { width: 1920px !important; height: auto !important; transform: none !important; box-shadow: none !important; position: static !important; }
+      .slide { display: flex !important; position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important; page-break-after: always; break-after: page; }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .deck-counter, .deck-hint { display: none !important; }
+    }
+  </style>
+  <style>
+    .slide { padding: 64px 120px 48px; font-family: var(--font-body); background: var(--surface); color: var(--fg); }
+    .slide.dark { background: var(--fg); color: var(--bg); }
+    .slide.light { background: var(--surface); color: var(--fg); }
+    .slide.hero { justify-content: center; }
+    .kicker { margin-bottom: 20px; font-family: var(--font-mono); font-size: 17px; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .display { font-family: var(--font-display); font-size: 104px; font-weight: 500; line-height: 1.02; letter-spacing: -0.03em; }
+    .title { max-width: none; font-family: var(--font-display); font-size: 58px; font-weight: 500; line-height: 1.08; letter-spacing: -0.02em; }
+    .subtitle { max-width: 60ch; margin-top: 18px; color: var(--muted); font-size: 28px; line-height: 1.4; }
+    .dark .subtitle { color: var(--bg); }
+    .hl { color: var(--accent); }
+    .slide-head { flex: 0 0 auto; }
+    .slide-head .subtitle { width: 100%; max-width: none; }
+    .slide-body { flex: 1; min-height: 0; display: flex; align-items: center; padding-bottom: 92px; }
+    .slide-body.top { align-items: flex-start; padding-top: 40px; }
+    .footer { position: absolute; left: 120px; right: 120px; bottom: 48px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.02em; color: var(--muted); }
+    .dark .footer { color: var(--bg); border-color: rgba(255,255,255,0.18); }
+
+    /* cover */
+    .cover { width: 100%; max-width: 1560px; margin-inline: auto; display: grid; grid-template-columns: 1fr 280px; align-items: center; gap: 100px; }
+    .cover.no-logo { grid-template-columns: 1fr; }
+    .cover .display { font-size: 132px; }
+    .cover .subtitle { max-width: 34ch; font-size: 36px; color: var(--muted); }
+    .dark .cover .subtitle { color: var(--bg); }
+    .cover-meta { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--font-mono); font-size: 18px; letter-spacing: 0.02em; color: var(--muted); }
+    .dark .cover-meta { color: var(--bg); }
+    .cover-disclaimer { max-width: 60ch; margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--accent); font-family: var(--font-mono); font-size: 16px; line-height: 1.5; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+    .dark .cover-disclaimer { color: var(--bg); }
+    .cover-logo { width: 280px; height: 280px; object-fit: contain; border-radius: 16px; }
+
+    /* statement / closing */
+    .statement { width: 100%; max-width: 1400px; margin-inline: auto; }
+    .statement .eyebrow { font-family: var(--font-mono); font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+    .statement .big { font-family: var(--font-display); font-size: 76px; font-weight: 500; line-height: 1.12; letter-spacing: -0.02em; max-width: 26ch; }
+    .steps { margin-top: 44px; display: grid; gap: 16px; max-width: 1100px; }
+    .step { display: grid; grid-template-columns: 48px 1fr; gap: 20px; align-items: baseline; padding-top: 18px; border-top: 1px solid var(--border); }
+    .dark .step { border-color: rgba(255,255,255,0.18); }
+    .step .n { font-family: var(--font-mono); color: var(--accent); font-size: 18px; }
+    .step .t { font-size: 24px; line-height: 1.4; }
+    .step .t strong { font-weight: 600; }
+
+    /* bullets */
+    .points { width: 100%; max-width: 1560px; margin-inline: auto; display: grid; gap: 18px; }
+    .point { display: grid; grid-template-columns: 56px 1fr; gap: 24px; align-items: start; padding-top: 22px; border-top: 1px solid var(--border); }
+    .dark .point { border-color: rgba(255,255,255,0.18); }
+    .point .n { font-family: var(--font-mono); color: var(--accent); font-size: 19px; padding-top: 6px; }
+    .point h3 { font-size: 30px; line-height: 1.2; font-weight: 500; }
+    .point p { margin-top: 8px; font-size: 22px; line-height: 1.45; color: var(--muted); }
+    .dark .point p { color: var(--bg); }
+
+    /* cards */
+    .cards { width: 100%; max-width: 1560px; margin-inline: auto; display: grid; gap: 28px; }
+    .cards.n2 { grid-template-columns: repeat(2, 1fr); }
+    .cards.n3 { grid-template-columns: repeat(3, 1fr); }
+    .cards.n4 { grid-template-columns: repeat(4, 1fr); }
+    .card { min-height: 380px; padding: 34px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--fg); display: flex; flex-direction: column; }
+    .card.featured { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .card .label { font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .card.featured .label { color: var(--accent); }
+    .card h3 { margin-top: auto; padding-top: 48px; font-size: 34px; line-height: 1.15; font-weight: 500; letter-spacing: -0.01em; }
+    .card p { margin-top: 18px; font-size: 21px; line-height: 1.45; color: var(--muted); }
+    .card.featured p { color: var(--bg); }
+
+    /* metrics / KPI tiles */
+    .tiles { width: 100%; max-width: 1560px; margin-inline: auto; display: grid; gap: 28px; }
+    .tiles.n2 { grid-template-columns: repeat(2, 1fr); }
+    .tiles.n3 { grid-template-columns: repeat(3, 1fr); }
+    .tiles.n4 { grid-template-columns: repeat(4, 1fr); }
+    .tile { padding: 34px 34px 30px; border-top: 2px solid var(--accent); background: var(--bg); color: var(--fg); }
+    .tile .value { font-family: var(--font-display); font-size: 84px; font-weight: 500; line-height: 1; letter-spacing: -0.03em; }
+    .tile .label { margin-top: 16px; font-size: 24px; line-height: 1.25; font-weight: 500; }
+    .tile .caption { margin-top: 12px; font-family: var(--font-mono); font-size: 15px; line-height: 1.4; color: var(--muted); }
+
+    /* bar chart */
+    .chart { width: 100%; max-width: 1560px; margin-inline: auto; padding: 34px 36px 32px; border-top: 2px solid var(--accent); background: var(--bg); color: var(--fg); }
+    .chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 30px; }
+    .chart-head h3 { font-size: 32px; line-height: 1.2; font-weight: 500; }
+    .chart-head span { font-family: var(--font-mono); font-size: 15px; color: var(--muted); }
+    .bars { display: grid; gap: 22px; }
+    .bar-row { display: grid; grid-template-columns: 320px 1fr 120px; gap: 20px; align-items: center; }
+    .bar-label { font-size: 20px; line-height: 1.25; }
+    .bar-track { height: 36px; background: var(--surface); border: 1px solid var(--border); }
+    .bar-fill { height: 100%; background: var(--fg); }
+    .bar-row:first-child .bar-fill { background: var(--accent); }
+    .bar-value { font-family: var(--font-mono); font-size: 20px; text-align: right; }
+
+    /* two column */
+    .two-col { width: 100%; max-width: 1560px; margin-inline: auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 72px; align-items: center; }
+    .col-copy p { font-size: 24px; line-height: 1.5; color: var(--muted); }
+    .dark .col-copy p { color: var(--bg); }
+    .col-copy p + p { margin-top: 20px; }
+    .col-copy strong { color: var(--fg); font-weight: 600; }
+    .dark .col-copy strong { color: var(--bg); }
+    .col-panel { padding: 40px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--fg); }
+    .col-panel .points, .col-panel .steps { margin: 0; max-width: none; }
+    .col-panel img, .col-img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 8px; }
+
+    /* architecture */
+    .arch { width: 100%; max-width: 1400px; margin-inline: auto; display: grid; gap: 18px; }
+    .arch-node { padding: 28px 34px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--fg); display: grid; grid-template-columns: 0.8fr 1fr 1.6fr; align-items: center; gap: 32px; }
+    .arch-node .label { font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .arch-node h3 { font-size: 32px; line-height: 1.15; font-weight: 500; }
+    .arch-node p { font-size: 20px; line-height: 1.45; color: var(--muted); }
+    .arch-arrow { text-align: center; font-size: 28px; color: var(--accent); margin: -6px 0; }
+
+    .speaker-notes { display: none; }
+    [data-od-id]:focus-visible { outline: 4px solid var(--success); outline-offset: 6px; }
+
+    /* Standalone decks are shared WITHOUT a host app's chrome, so surface the built-in
+       navigation the frozen framework ships (and wires to prev/next): a prev · counter ·
+       next pill (bottom center) plus a keyboard hint (bottom right). Overriding here in the
+       editable layer leaves the frozen framework block untouched. */
+    .deck-counter { display: flex; }
+    .deck-hint { display: block; }
+    @media print { .deck-counter, .deck-hint { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <div class="deck-stage" id="deck-stage">
+      <section class="slide dark hero" data-screen-label="01 Cover" data-od-id="slide-01">
+        <div class="cover no-logo"><div class="cover-main"><h1 class="display">10 memory B-cell states in <span class="hl">healthy pediatric tonsil</span></h1><p class="subtitle">Independent reanalysis from raw counts with no plasma-cell program behind the source plasmablast label.</p><div class="cover-meta"><span>18,213 cells · 7 donors</span><span>Sample 7970bd6b</span><span>2026-11-07</span></div></div></div>
+        
+        
+      </section>
+      <section class="slide light" data-screen-label="02 Metrics" data-od-id="slide-02">
+        <header class="slide-head"><div class="kicker">DATASET</div><h2 class="title">Analysis at a glance</h2></header><div class="slide-body"><div class="tiles n4"><div class="tile"><div class="value">21,595</div><div class="label">Cells before QC</div><div class="caption">CELLxGENE tonsil B-cell dataset</div></div><div class="tile"><div class="value">18,213</div><div class="label">Cells after QC</div><div class="caption">84.3% retention</div></div><div class="tile"><div class="value">7</div><div class="label">Donors</div><div class="caption">13 libraries</div></div><div class="tile"><div class="value">10</div><div class="label">Leiden clusters</div><div class="caption">Resolution 0.8, Harmony-corrected</div></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>02</span></div>
+        
+      </section>
+      <section class="slide light" data-screen-label="03 Bar_Chart" data-od-id="slide-03">
+        <header class="slide-head"><div class="kicker">CLUSTERING</div><h2 class="title">Cells per cluster</h2><p class="subtitle">Leiden resolution 0.8 after Harmony batch correction on donor.</p></header><div class="slide-body"><div class="chart"><div class="chart-head"><h3>Cells</h3><span>cells</span></div><div class="bars"><div class="bar-row"><div class="bar-label">1: Resting CD21-high memory B</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">3,679</div></div><div class="bar-row"><div class="bar-label">0: Resting memory B (quiescent)</div><div class="bar-track"><div class="bar-fill" style="width:85.5%"></div></div><div class="bar-value">3,145</div></div><div class="bar-row"><div class="bar-label">5: Activated memory B (IgM-high)</div><div class="bar-track"><div class="bar-fill" style="width:73.6%"></div></div><div class="bar-value">2,706</div></div><div class="bar-row"><div class="bar-label">3: Activated memory B (immediate-early)</div><div class="bar-track"><div class="bar-fill" style="width:64.1%"></div></div><div class="bar-value">2,357</div></div><div class="bar-row"><div class="bar-label">6: FCRL4+ atypical memory B</div><div class="bar-track"><div class="bar-fill" style="width:59.8%"></div></div><div class="bar-value">2,200</div></div><div class="bar-row"><div class="bar-label">7: Heat-shock / stress-response memory B</div><div class="bar-track"><div class="bar-fill" style="width:44.9%"></div></div><div class="bar-value">1,653</div></div><div class="bar-row"><div class="bar-label">4: Heat-shock / stress-response memory B</div><div class="bar-track"><div class="bar-fill" style="width:31.1%"></div></div><div class="bar-value">1,144</div></div><div class="bar-row"><div class="bar-label">2: Pre-GC / activated memory B</div><div class="bar-track"><div class="bar-fill" style="width:18.1%"></div></div><div class="bar-value">666</div></div><div class="bar-row"><div class="bar-label">8: FCRL5-high / CD21-low memory B</div><div class="bar-track"><div class="bar-fill" style="width:9.2%"></div></div><div class="bar-value">339</div></div><div class="bar-row"><div class="bar-label">9: CD21-low memory B (possibly low quality)</div><div class="bar-track"><div class="bar-fill" style="width:8.8%"></div></div><div class="bar-value">324</div></div></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>03</span></div>
+        <aside class="speaker-notes">Grounded: adata.obs[&#x27;leiden&#x27;].value_counts(), n=18,213</aside>
+      </section>
+      <section class="slide light" data-screen-label="04 Bullets" data-od-id="slide-04">
+        <header class="slide-head"><div class="kicker">ANNOTATION</div><h2 class="title">LLM-suggested cell states recover published subtypes</h2></header><div class="slide-body top"><div class="points"><div class="point"><span class="n">01</span><div><h3>1 high-confidence match</h3><p>FCRL4+ atypical memory B — FCRL4+ atypical memory B cells recovered as a distinct population with FCRL4+ (80%) author agreement.</p></div></div><div class="point"><span class="n">02</span><div><h3>Resting to activated spectrum</h3><p>Resting quiescent, CD21-high resting, pre-GC, activated (immediate-early and IgM-high) states are cleanly separated.</p></div></div><div class="point"><span class="n">03</span><div><h3>Heat-shock / stress-response clusters</h3><p>Two clusters (4 and 7) driven by HSPA1A, DNAJB1 — may partly reflect dissociation artifact rather than in vivo biology.</p></div></div><div class="point"><span class="n">04</span><div><h3>Labels pending expert review</h3><p>All annotations are marker-gene suggestions, not reference-based — expert validation is required before downstream use.</p></div></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>04</span></div>
+        
+      </section>
+      <section class="slide dark hero" data-screen-label="05 Statement" data-od-id="slide-05">
+        <div class="statement"><div class="eyebrow">KEY FINDING</div><p class="big">The source <span class="hl">plasmablast</span> label (5,159 cells) is <strong>not supported</strong> by plasma-cell gene expression.</p><div class="steps"><div class="step"><span class="n">01</span><span class="t">Clusters 3 (1,880 cells) and 5 (1,703 cells) concentrate the label.</span></div><div class="step"><span class="n">02</span><span class="t">These clusters express immediate-early and activation genes — not antibody-secreting cell markers.</span></div><div class="step"><span class="n">03</span><span class="t">Check the original annotation against the publication before downstream use.</span></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>05</span></div>
+        
+      </section>
+      <section class="slide light" data-screen-label="06 Bar_Chart" data-od-id="slide-06">
+        <header class="slide-head"><div class="kicker">EVIDENCE</div><h2 class="title">Peak cluster-mean of plasma-cell markers</h2><p class="subtitle">Max mean log-normalised expression across all clusters — all well below plasma-cell levels.</p></header><div class="slide-body"><div class="chart"><div class="chart-head"><h3>Max cluster mean</h3><span>log-norm</span></div><div class="bars"><div class="bar-row"><div class="bar-label">PRDM1</div><div class="bar-track"><div class="bar-fill" style="width:3.3%"></div></div><div class="bar-value">0.10</div></div><div class="bar-row"><div class="bar-label">XBP1</div><div class="bar-track"><div class="bar-fill" style="width:12.0%"></div></div><div class="bar-value">0.36</div></div><div class="bar-row"><div class="bar-label">JCHAIN</div><div class="bar-track"><div class="bar-fill" style="width:11.0%"></div></div><div class="bar-value">0.33</div></div><div class="bar-row"><div class="bar-label">MZB1</div><div class="bar-track"><div class="bar-fill" style="width:7.7%"></div></div><div class="bar-value">0.23</div></div></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>06</span></div>
+        <aside class="speaker-notes">Grounded: sc.get.obs_df(adata, use_raw=True).groupby(&#x27;leiden&#x27;).mean().max()</aside>
+      </section>
+      <section class="slide light" data-screen-label="07 Bullets" data-od-id="slide-07">
+        <header class="slide-head"><div class="kicker">LIMITATIONS</div><h2 class="title">Caveats and next steps</h2></header><div class="slide-body top"><div class="points"><div class="point"><span class="n">01</span><div><h3>Residual donor structure</h3><p>Donor-specific enrichment persists after Harmony in select clusters — consider alternative correction or higher integration strength.</p></div></div><div class="point"><span class="n">02</span><div><h3>Mitochondrial genes absent</h3><p>MT filter relies on the authors&#x27; precomputed fraction; the matrix itself contains zero MT genes.</p></div></div><div class="point"><span class="n">03</span><div><h3>In-silico annotation only</h3><p>Cell-state labels are LLM suggestions from Wilcoxon markers and canonical genes — not reference-based mapping or protein-level validation.</p></div></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>07</span></div>
+        
+      </section>
+      <section class="slide dark hero" data-screen-label="08 Closing" data-od-id="slide-08">
+        <div class="statement"><div class="eyebrow">NEXT STEPS</div><p class="big">Expert review → reference mapping → downstream integration</p><div class="steps"><div class="step"><span class="n">01</span><span class="t">Validate suggested annotations against the original publication and protein markers.</span></div><div class="step"><span class="n">02</span><span class="t">Run reference-based label transfer (e.g. CellTypist, Azimuth) for independent confirmation.</span></div><div class="step"><span class="n">03</span><span class="t">Integrate with other tonsil datasets to test reproducibility of the B-cell states.</span></div></div></div>
+        <div class="footer"><span>Databricks · scRNA-seq Reanalysis</span><span>08</span></div>
+        
+      </section>
+    </div>
+  </div>
+  <nav class="deck-counter" role="navigation" aria-label="Deck navigation">
+    <button type="button" id="deck-prev" aria-label="Previous slide">‹</button>
+    <span class="deck-count"><span id="deck-cur">01</span> <span class="total">/ <span id="deck-total">01</span></span></span>
+    <button type="button" id="deck-next" aria-label="Next slide">›</button>
+  </nav>
+  <div class="deck-hint">← / → · space · R reset</div>
+  <script>
+    (function () {
+      var stage = document.getElementById('deck-stage');
+      var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+      var prev = document.getElementById('deck-prev');
+      var next = document.getElementById('deck-next');
+      var cur = document.getElementById('deck-cur');
+      var total = document.getElementById('deck-total');
+      var STORE = 'deck:idx:' + (location.pathname || '/');
+      var idx = 0;
+      function fit() {
+        var sw = window.innerWidth; var sh = window.innerHeight; var pad = 32;
+        var s = Math.min((sw - pad) / 1920, (sh - pad) / 1080);
+        if (!isFinite(s) || s <= 0) s = 1;
+        var tx = (sw - 1920 * s) / 2; var ty = (sh - 1080 * s) / 2;
+        stage.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+      }
+      function pad2(n) { return (n < 10 ? '0' : '') + n; }
+      function paint() {
+        slides.forEach(function (el, i) { el.classList.toggle('active', i === idx); });
+        if (cur) cur.textContent = pad2(idx + 1); if (total) total.textContent = pad2(slides.length);
+        if (prev) prev.toggleAttribute('disabled', idx <= 0); if (next) next.toggleAttribute('disabled', idx >= slides.length - 1);
+        postDeckState();
+      }
+      function go(i) { idx = Math.max(0, Math.min(slides.length - 1, i)); paint(); try { localStorage.setItem(STORE, String(idx)); } catch (_) {} }
+      var OD_DECK_PROTOCOL_VERSION = 1;
+      function postDeckState() { try { window.parent.postMessage({ type: 'od:slide-state', protocolVersion: OD_DECK_PROTOCOL_VERSION, active: idx, count: slides.length }, '*'); } catch (_) {} }
+      function announceDeckProtocol() { try { window.parent.postMessage({ type: 'od:deck-ready', protocolVersion: OD_DECK_PROTOCOL_VERSION, capabilities: ["absolute-navigation","state-events"] }, '*'); } catch (_) {} }
+      window.addEventListener('message', function (event) {
+        var data = event && event.data; if (!data || data.type !== 'od:slide') return;
+        if (data.protocolVersion != null && data.protocolVersion !== OD_DECK_PROTOCOL_VERSION) return;
+        var target = idx;
+        if (data.action === 'go') { if (typeof data.index !== 'number' || !isFinite(data.index)) return; target = Math.floor(data.index); }
+        else if (data.action === 'next') target = idx + 1; else if (data.action === 'prev') target = idx - 1;
+        else if (data.action === 'first') target = 0; else if (data.action === 'last') target = slides.length - 1; else return;
+        go(target);
+      });
+      function onKey(e) {
+        if (e.__odDeckKeyHandled) return; var t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.__odDeckKeyHandled = true; e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.__odDeckKeyHandled = true; e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Home' || String(e.key).toLowerCase() === 'r') { e.__odDeckKeyHandled = true; e.preventDefault(); go(0); }
+        else if (e.key === 'End') { e.__odDeckKeyHandled = true; e.preventDefault(); go(slides.length - 1); }
+      }
+      window.addEventListener('keydown', onKey, true); document.addEventListener('keydown', onKey, true);
+      if (prev) prev.addEventListener('click', function () { go(idx - 1); }); if (next) next.addEventListener('click', function () { go(idx + 1); });
+      document.addEventListener('click', function (e) {
+        if (e.defaultPrevented) return; if (e.button !== undefined && e.button !== 0) return; if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+        var t = e.target;
+        while (t && t !== document.body && t !== document.documentElement) {
+          var tag = String(t.tagName || '').toUpperCase();
+          if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable || t.getAttribute('role') === 'button' || t.getAttribute('role') === 'link') return;
+          t = t.parentElement;
+        }
+        focusDeck(); if (e.clientX < window.innerWidth / 2) go(idx - 1); else go(idx + 1);
+      }, true);
+      document.body.setAttribute('tabindex', '-1'); document.body.style.outline = 'none';
+      function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
+      document.addEventListener('mousedown', focusDeck); window.addEventListener('load', focusDeck);
+      try { var saved = parseInt(localStorage.getItem(STORE) || '0', 10); if (!isNaN(saved) && saved >= 0 && saved < slides.length) idx = saved; } catch (_) {}
+      window.addEventListener('resize', fit); announceDeckProtocol(); fit(); paint(); focusDeck();
+    })();
+  </script>
+<script type="application/json" id="speaker-notes">
+[
+  "",
+  "",
+  "Grounded: adata.obs['leiden'].value_counts(), n=18,213",
+  "",
+  "",
+  "Grounded: sc.get.obs_df(adata, use_raw=True).groupby('leiden').mean().max()",
+  "",
+  ""
+]
+</script>
+</body></html>
