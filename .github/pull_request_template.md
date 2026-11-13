@@ -11,3 +11,5 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md). The automated check covers the files;
 - [ ] A second deploy reports 0 changes, and a second copy in the same workspace fails without creating anything
 - [ ] Destroy leaves nothing named after the workshop; anything it can't remove is listed under `## Tear down`
 - [ ] The README lists every requirement beyond a Free Edition workspace (or there are none)
+- [ ] A new or renamed workshop has its row in the Workshops table of the root `README.md`
+- [ ] A rule change updates `CONTRIBUTING.md`, `AGENTS.md`, `scripts/check_workshops.py` and this template together

@@ -10,6 +10,9 @@ The rules below make that true. `scripts/check_workshops.py` checks them on ever
 ```bash
 pip install pyyaml
 python scripts/check_workshops.py
+
+# or, with uv and nothing installed:
+uv run --no-project --with pyyaml python scripts/check_workshops.py
 ```
 
 ## The rules
@@ -18,8 +21,10 @@ python scripts/check_workshops.py
 
 - One top-level folder per workshop, named in `snake_case`. If the workshop deploys anything, its bundle
   (`databricks.yml`) sits at the root of that folder, and `bundle.name` equals the folder name.
-- A `README.md` with: what the deploy creates, how to run the workshop, a `## Tear down` section, and the support
-  disclaimer under `## How to get help` (copy it from an existing workshop).
+- A `README.md` with: what the deploy creates, how to run the workshop, a `## Tear down` section, and under
+  `## How to get help` the support disclaimer the check looks for: "Databricks support does not cover this content.
+  For questions or bugs, open a GitHub issue. The team will help on a best effort basis."
+- A row for the workshop in the **Workshops** table of the root [README.md](README.md).
 - Notebooks in **source format**: `.py` or `.sql` files that start with `# Databricks notebook source` (or
   `-- Databricks notebook source`). No `.ipynb`: they're JSON, unreadable in review and in diffs.
 - No file over 5 MB. Open in Databricks clones the whole repository with a 3-minute limit, so generate data in SQL
@@ -33,6 +38,7 @@ The workshop's name is its namespace. Everything it creates carries it, so two w
 
 - No `mode:` on any target. Instead, set `presets.name_prefix: "[<workshop>] "`. Bundle resources are named
   `[<workshop>] ...` and schemas `<workshop>_<name>`.
+- Tag everything with the workshop's name: `presets.tags: {workshop: <workshop>}`, so its usage can be measured.
 - Code only writes inside the workshop's own schemas (`<workshop>_*`) and never refers to another workshop's objects.
 - The names are fixed, so a workspace holds one copy of a workshop. A second deploy fails on the existing schemas
   before it creates anything: make any deploy-time job wait for the schemas (`lifecycle.depends_on`), so it can't be
@@ -143,7 +149,8 @@ not an admin of anything you didn't create:
 
 ## Publishing an Open in Databricks link
 
-Create the link after the workshop is merged to `main`: links always clone the default branch. In the admin tool
-(go/openindatabricks/create), enter exactly `https://github.com/databricks-solutions/databricks-workshops` and the
-workshop's folder as the subdirectory. Updates merged to `main` reach every published button immediately, so a
-breaking commit breaks them all: test on a branch first.
+Create the link after the workshop is merged to `main`: links always clone the default branch. A Databricks
+maintainer creates it in the internal admin tool (go/openindatabricks/create), with exactly
+`https://github.com/databricks-solutions/databricks-workshops` as the repository and the workshop's folder as the
+subdirectory. Updates merged to `main` reach every published button immediately, so a breaking commit breaks them
+all: test on a branch first.

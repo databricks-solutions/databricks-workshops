@@ -1,3 +1,8 @@
+Copyright (2026) Databricks, Inc.
+
+This repository is provided subject to the Databricks License in LICENSE. The third-party libraries it includes or
+refers to, and their licenses, are listed under "License" in README.md.
+
 ## Support
-Databricks does not offer official support for `dbdemos` or any demo assets.
-For any issue with `dbdemos` or the demos installed, please open an issue and the demo team will have a look on a best effort basis.
+Databricks support doesn't cover this content. For questions or bugs, open a GitHub issue and the team will help on a
+best effort basis.

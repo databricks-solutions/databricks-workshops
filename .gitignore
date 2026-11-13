@@ -1,0 +1,13 @@
+# Bundle state from local deploys
+.databricks/
+
+# Presenter-only material: never commit, never deploy (also listed in each workshop's .gitignore)
+presenter/
+
+# Local tools and editors
+.DS_Store
+__pycache__/
+.venv/
+.idea/
+.vscode/
+.isaac/

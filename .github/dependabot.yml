@@ -1,0 +1,8 @@
+# Opens a pull request when an action used in .github/workflows has a new release.
+# The PyYAML pin in check-workshops.yml is inline in a run step, so Dependabot doesn't see it: bump it by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
