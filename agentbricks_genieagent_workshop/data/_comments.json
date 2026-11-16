@@ -1,0 +1,134 @@
+{
+ "appointment_access": {
+  "table": "Monthly appointment access per clinic by appointment type, visit mode, time of day and whether an SMS reminder was sent. Use for no-shows and wait times by segment.",
+  "columns": {
+   "month": "Month (first day of the month)",
+   "tenant_id": "Clinic identifier",
+   "specialty": "Clinic's specialty, e.g. behavioral_health",
+   "region": "Clinic's sales region: West, Central or East",
+   "appointment_type": "Appointment type, e.g. Therapy session (45 min), Sick visit",
+   "visit_mode": "video or in_person",
+   "time_of_day": "morning (before 12:00), afternoon (12:00-17:00) or evening (17:00 and later)",
+   "reminder_sent": "True if an SMS reminder was sent for these appointments",
+   "appointments": "Booked appointments",
+   "no_shows": "Appointments the patient missed",
+   "no_show_rate": "Row-level no-show rate; never average it. Use the no_show_rate measure",
+   "avg_wait_minutes": "Average minutes patients waited in this row; weight by appointments (avg_wait measure)"
+  }
+ },
+ "claims_monthly": {
+  "table": "Monthly insurance claims per clinic, payer, procedure (CPT) code and denial reason. One row per month x clinic x payer x CPT code x denial reason. Recent months still have pending claims.",
+  "columns": {
+   "month": "Service month (first day of the month)",
+   "tenant_id": "Clinic identifier",
+   "region": "Clinic's sales region: West, Central or East",
+   "specialty": "Clinic's specialty, e.g. behavioral_health",
+   "payer_id": "Payer identifier",
+   "payer_name": "Payer name, e.g. Larkspan Health Plan",
+   "payer_type": "commercial, medicare_advantage or medicaid_managed_care",
+   "cpt_code": "CPT procedure code, e.g. 90834 (psychotherapy, 45 min), 99215 (established visit, high complexity)",
+   "cpt_description": "What the CPT code is",
+   "cpt_category": "E/M established, E/M new, Preventive, Behavioral, Lab or Procedure",
+   "denial_reason_code": "CARC denial reason on denied claims, e.g. CO-197 (prior authorization absent), CO-16 (missing information), CO-50 (not medically necessary), CO-109 (wrong payer), CO-97 (bundled), CO-29 (timely filing); null for paid or pending claims",
+   "claims": "Claims submitted (paid + denied + pending)",
+   "decided_claims": "Claims the payer has decided (paid, denied or under appeal); excludes pending",
+   "denied_claims": "Claims denied, including those under appeal",
+   "denial_rate": "Row-level denial rate; never average it. Use the denial_rate measure",
+   "billed_usd": "Billed amount, USD",
+   "paid_usd": "Amount paid by the payer, USD",
+   "denied_billed_usd": "Billed value of denied claims, USD: the revenue at risk from denials"
+  }
+ },
+ "clinic_daily_ops": {
+  "table": "Daily operations per clinic: bookings, completed visits, no-shows, cancellations, waits, video and AI Scribe visits, active clinicians.",
+  "columns": {
+   "date": "Visit date",
+   "tenant_id": "Clinic identifier",
+   "appointments_booked": "All appointments booked for that day",
+   "visits_completed": "Visits that happened",
+   "no_shows": "Booked appointments the patient missed",
+   "cancellations": "Booked appointments cancelled",
+   "no_show_rate": "Row-level no-show rate; never average it. Use no_shows / appointments_booked",
+   "avg_wait_minutes": "Average minutes patients waited that day; weight by visits_completed",
+   "p90_wait_minutes": "90th-percentile wait that day, minutes; do not average across days for a network figure",
+   "video_visits": "Completed visits held by video",
+   "ai_scribe_visits": "Completed visits documented with AI Scribe",
+   "active_clinicians": "Clinicians with at least one completed visit that day"
+  }
+ },
+ "clinician_productivity_monthly": {
+  "table": "Monthly throughput per clinician: visits, days worked, AI Scribe share and note-writing time. Rows with active_days = 0 are months the clinician did not work.",
+  "columns": {
+   "month": "Month (first day of the month)",
+   "tenant_id": "Clinic identifier",
+   "clinician_id": "Pseudonymous clinician identifier",
+   "visits": "Completed visits that month",
+   "active_days": "Days the clinician completed at least one visit (0 = did not work that month)",
+   "visits_per_active_day": "Row-level ratio; use the visits_per_active_day measure",
+   "ai_scribe_share": "Share of the clinician's visits documented with AI Scribe (0-1)",
+   "avg_note_minutes": "Average minutes to finish a visit note; weight by visits (note_minutes measure)"
+  }
+ },
+ "dim_clinic": {
+  "table": "One row per clinic (Kasterwell's customer, also called tenant) with its current subscription. Join every other table to it on tenant_id.",
+  "columns": {
+   "tenant_id": "Clinic identifier; join key for every table",
+   "clinic_name": "Clinic display name",
+   "specialty": "Clinical specialty: primary_care, behavioral_health, urgent_care, pediatrics, womens_health, dermatology",
+   "region": "Sales region: West, Central or East",
+   "state": "US state, 2-letter code",
+   "city": "City",
+   "go_live_date": "Date the clinic started using the platform",
+   "plan_tier": "Current plan: Starter, Growth or Enterprise",
+   "seats": "Licensed clinician seats on the current contract",
+   "addons": "Comma-separated add-ons turned on: sms_reminders, ai_scribe (empty = none)",
+   "mrr_usd": "Monthly recurring revenue, USD",
+   "arr_usd": "Annual recurring revenue, USD (12 x MRR); the revenue at stake at renewal",
+   "renewal_date": "Next contract renewal date (all are after the data end, 2026-10-31)",
+   "subscription_status": "active or at_risk (flagged by customer success)",
+   "sms_reminders_enabled_date": "Date the clinic turned on SMS appointment reminders; null = not enabled",
+   "ai_scribe_enabled_date": "Date the clinic turned on AI Scribe; null = not enabled"
+  }
+ },
+ "dim_payer": {
+  "table": "Insurance payers billed by Kasterwell clinics (all fictional). Join to claims_monthly on payer_id.",
+  "columns": {
+   "payer_id": "Payer identifier",
+   "payer_name": "Payer name, e.g. Larkspan Health Plan",
+   "payer_type": "commercial, medicare_advantage, medicaid_managed_care or self_pay",
+   "regions": "Regions where the payer operates (ALL = nationwide)"
+  }
+ },
+ "revenue_monthly": {
+  "table": "Kasterwell's own monthly invoice to each clinic (its SaaS revenue), as of 2026-10-31.",
+  "columns": {
+   "month": "Invoice month (first day of the month)",
+   "tenant_id": "Clinic identifier",
+   "invoiced_usd": "Invoice amount, USD",
+   "invoice_status": "paid, open (not yet due) or overdue (past due, unpaid)",
+   "due_date": "Invoice due date",
+   "paid_date": "Date paid; null if unpaid as of 2026-10-31",
+   "days_late": "Days paid after the due date (negative = early); null if unpaid"
+  }
+ },
+ "tenant_health_weekly": {
+  "table": "Weekly customer health per clinic: active clinicians vs seats, logins, visits, support tickets and CSAT. Weeks start on Monday; the latest week is 2026-10-26. Use for churn and renewal risk (playbook CS-02).",
+  "columns": {
+   "week": "Week start date (Monday)",
+   "tenant_id": "Clinic identifier",
+   "clinic_name": "Clinic display name",
+   "seats": "Licensed clinician seats",
+   "weekly_active_clinicians": "Distinct clinicians active on the platform that week",
+   "seat_utilization": "weekly_active_clinicians / seats for one clinic-week; can exceed 1 when a clinic uses more clinicians than it licenses (an expansion signal)",
+   "logins": "Platform logins that week",
+   "visits": "Completed visits that week",
+   "tickets": "Support tickets opened that week",
+   "p1_tickets": "Priority-1 (outage-level) tickets opened that week",
+   "avg_csat": "Average CSAT (1-5) of rated tickets that week; null when no ticket was rated"
+  }
+ },
+ "documents": {
+  "table": "Kasterwell document corpus chunked by section: protocols, payer bulletins, product KB, policies, release notes. Source for AI Search.",
+  "columns": {}
+ }
+}
