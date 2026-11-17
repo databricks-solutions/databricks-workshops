@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Notebook 02 catch-up: runs blocks A-D in one go, then deploys. Notebook 02 prints the exact command:
-#   bash <kit folder>/lab2_catchup.sh <agent-name> <genie-space-id> <catalog.schema>
+#   bash <kit folder>/resources/lab2_catchup.sh <agent-name> <genie-space-id> <catalog.schema>
 set -euo pipefail
 AGENT="${1:?usage: lab2_catchup.sh <agent-name> <genie-space-id> <catalog.schema>}"
 GENIE="${2:?usage: lab2_catchup.sh <agent-name> <genie-space-id> <catalog.schema>}"

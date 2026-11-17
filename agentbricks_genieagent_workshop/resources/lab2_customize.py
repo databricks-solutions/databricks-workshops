@@ -1,8 +1,8 @@
 """Notebook 02 helper: turn a fresh `agentbricks init` project into the Kasterwell ops agent.
 
 Run from inside the project folder (in the web terminal):
-    python <kit folder>/lab2_customize.py                     # set the instructions, remove sample tools
-    python <kit folder>/lab2_customize.py --add-rule "..."    # add one rule to the instructions (block H)
+    python <kit folder>/resources/lab2_customize.py                     # set the instructions, remove sample tools
+    python <kit folder>/resources/lab2_customize.py --add-rule "..."    # add one rule to the instructions (block H)
 
 The template's sample send_message tool asks for human approval, which isn't supported when tools run on
 behalf of the signed-in user (our Genie Agent and UC function tools do), so it's removed.

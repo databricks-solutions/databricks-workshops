@@ -47,9 +47,15 @@ pay-per-token model.
    4. Optional, this workshop only: open **Advanced**, turn on **Sparse checkout mode**, and enter
       `agentbricks_genieagent_workshop`.
    5. Click **Create Git folder**.
-2. Open `agentbricks_genieagent_workshop/00_setup`, connect to **Serverless**, and click **Run all** (about 3
-   minutes).
-3. Follow `01_genie_agent`, then `02_agent_bricks_cli`. Run their cells one at a time, as each step says.
+2. Open the `agentbricks_genieagent_workshop` folder and run its three notebooks, in order:
+
+   | # | Notebook | Time | How to run it |
+   |---|---|---|---|
+   | 1 | `00_setup` | ~3 min | Connect to **Serverless**, click **Run all** |
+   | 2 | `01_genie_agent` | ~17 min | One cell at a time, as each step says |
+   | 3 | `02_agent_bricks_cli` | ~27 min | One cell at a time; uses the web terminal |
+
+   You don't open anything in `resources/`: the notebooks use it.
 
 ## Tear down
 
@@ -64,16 +70,19 @@ There's no bundle, so delete these by hand:
 
 ## Files
 
-| File | What it is |
-|---|---|
-| `00_setup` | Loads the data, creates the personas and the three tools your agent uses |
-| `01_genie_agent` | Build, teach and test a Genie Agent; call it from code |
-| `02_agent_bricks_cli` | Build, deploy, chat with and change an agent with the Agent Bricks CLI; clean up |
-| `_config` | Works out your names (schema, agent, app) and switches personas |
-| `genie_config.py` | The finished Genie Agent's configuration (used by *Skip the clicks* in `01`) |
-| `lab2_customize.py`, `lab2_catchup.sh` | Helpers that notebook `02` tells you when to run |
-| `data/` | The workshop data (parquet, 5 MB in total) and table descriptions |
-| `images/` | Screenshots used in the notebooks |
+```
+agentbricks_genieagent_workshop/
+  00_setup               run 1st: loads the data, creates the personas and the three tools your agent uses
+  01_genie_agent         run 2nd: build, teach and test a Genie Agent; call it from code
+  02_agent_bricks_cli    run 3rd: build, deploy, chat with and change an agent; clean up
+  resources/             used by the notebooks; you don't open these
+    _config              works out your names (schema, agent, app) and switches personas
+    genie_config.py      the finished Genie Agent's configuration (Skip the clicks in 01)
+    lab2_customize.py    helpers that notebook 02 tells you when to run
+    lab2_catchup.sh
+    data/                the workshop data (parquet, 5 MB in total) and table descriptions
+    images/              screenshots used in the notebooks
+```
 
 All company, clinic, payer and patient names are fictional; the data is synthetic.
 

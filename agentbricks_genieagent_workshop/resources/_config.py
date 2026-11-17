@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # Shared configuration
-# MAGIC Every notebook runs this with `%run ./_config`. It works out *your* names from your login. You don't need to edit anything here.
+# MAGIC Every notebook runs this with `%run ./resources/_config`. It works out *your* names from your login. You don't need to edit anything here.
 # MAGIC
 # MAGIC In your own workspace (for example a free trial) everything goes into one schema, `workspace.agentbricks_genieagent_workshop_lab`. In the presenters' workshop workspace each person gets their own schema in `kasterwell_labs`.
 
@@ -41,6 +41,10 @@ MEMORY_STORE = f"{_STORE}-memory"
 SESSION_STORE = f"{_STORE}-sessions"
 
 KIT_DIR = "/Workspace" + dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get().rsplit("/", 1)[0]
+RESOURCES = f"{KIT_DIR}/resources"   # helpers, data and screenshots; the three notebooks sit one level up
+import sys
+if RESOURCES not in sys.path:
+    sys.path.insert(0, RESOURCES)  # so the notebooks can `import genie_config`
 GENIE_TABLES = ["dim_clinic", "tenant_health_weekly", "claims_monthly", "appointment_access", "revenue_monthly"]
 PERSONAS = ["billing_analyst", "care_coordinator_west", "clinic_admin_vellamy", "compliance_officer"]
 

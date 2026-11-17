@@ -25,10 +25,10 @@
 # MAGIC Check these three things first. They prevent almost every setup problem.
 # MAGIC
 # MAGIC - **You're in a Databricks workspace you signed up for with your work email.** A free trial created with a personal email (Gmail, Outlook and so on) blocks some features the workshop needs.
-# MAGIC - **You imported the whole kit folder**, not just this notebook. Open the folder this notebook is in: you should see the three notebooks, `_config`, a few helper files and a `data` folder.
-# MAGIC - **This notebook is open from inside that folder.** The notebooks find the data by looking next to themselves.
+# MAGIC - **You imported the whole kit folder**, not just this notebook. Open the folder this notebook is in: you should see the three notebooks (`00_setup`, `01_genie_agent`, `02_agent_bricks_cli`) and a `resources` folder. You only open the three notebooks; `resources` holds the helpers, data and screenshots they use.
+# MAGIC - **This notebook is open from inside that folder.** The notebooks find `resources` by looking next to themselves.
 # MAGIC
-# MAGIC ![The kit folder after import](./images/00_kit_folder.png)
+# MAGIC ![The kit folder after import](./resources/images/00_kit_folder.png)
 # MAGIC
 # MAGIC ### New to Databricks notebooks?
 # MAGIC A notebook is a list of **cells**. Grey cells hold code. Cells like this one hold instructions. When you run a code cell, its result appears directly underneath it. You can run one cell with the **▶** button at its top left (or **Shift + Enter**), or every cell from top to bottom with **Run all**.
@@ -44,7 +44,7 @@
 # MAGIC 2. Click **Serverless**.
 # MAGIC 3. Wait a few seconds for the dot next to *Serverless* to turn **green**.
 # MAGIC
-# MAGIC ![Choose Serverless from the compute dropdown](./images/00_connect_serverless.png)
+# MAGIC ![Choose Serverless from the compute dropdown](./resources/images/00_connect_serverless.png)
 
 # COMMAND ----------
 
@@ -55,7 +55,7 @@
 # MAGIC 2. The notebook runs every cell from top to bottom. Each cell shows a spinning icon while it runs, then a **green check mark** and how long it took.
 # MAGIC 3. Scroll down as it runs and compare each result with the screenshots below.
 # MAGIC
-# MAGIC ![Run all is in the toolbar, next to the compute dropdown](./images/00_run_all.png)
+# MAGIC ![Run all is in the toolbar, next to the compute dropdown](./resources/images/00_run_all.png)
 # MAGIC
 # MAGIC > **The first cell can take about a minute.** Serverless is starting up. That only happens once per session.
 # MAGIC
@@ -73,7 +73,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./_config
+# MAGIC %run ./resources/_config
 
 # COMMAND ----------
 
@@ -87,14 +87,14 @@
 # MAGIC
 # MAGIC **What you should see:** one line per table with its row count. Check that your numbers match:
 # MAGIC
-# MAGIC ![Expected output: nine tables with their row counts](./images/00_load_output.png)
+# MAGIC ![Expected output: nine tables with their row counts](./resources/images/00_load_output.png)
 # MAGIC
 # MAGIC **If something goes wrong**
 # MAGIC | Message | What it means | Fix |
 # MAGIC |---|---|---|
-# MAGIC | `FileNotFoundError: .../data/...parquet` | The `data` folder wasn't imported with the notebooks | Import the whole kit folder again, including `data` |
+# MAGIC | `FileNotFoundError: .../resources/data/...parquet` | The `resources` folder wasn't imported with the notebooks | Import the whole kit folder again, including `resources` |
 # MAGIC | `PERMISSION_DENIED` on `CREATE SCHEMA` | You aren't allowed to create schemas in this workspace | Use your own free trial, where you're the admin |
-# MAGIC | `ModuleNotFoundError: genie_config` | This notebook was moved out of the kit folder | Open `00_setup` from inside the kit folder |
+# MAGIC | `ModuleNotFoundError: genie_config` | This notebook was moved away from its `resources` folder | Open `00_setup` from inside the kit folder |
 
 # COMMAND ----------
 
@@ -106,7 +106,7 @@ import pandas as pd
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {S} COMMENT 'Kasterwell Health workshop (fictional data)'")
 import genie_config  # table and column descriptions, shared with the Genie Agent
 
-data = Path(KIT_DIR) / "data"
+data = Path(RESOURCES) / "data"
 comments = json.loads((data / "_comments.json").read_text())  # documents table
 
 for name in comments:
@@ -135,7 +135,7 @@ for name in comments:
 # MAGIC
 # MAGIC **What you should see:** a table with the four personas.
 # MAGIC
-# MAGIC ![Expected output: the four personas](./images/00_personas_output.png)
+# MAGIC ![Expected output: the four personas](./resources/images/00_personas_output.png)
 # MAGIC
 # MAGIC | Persona | Sees |
 # MAGIC |---|---|
@@ -226,7 +226,7 @@ RETURN
 # MAGIC 1. **`clinic_snapshot('Vellamy')`** returns one row for *Vellamy Family Health*: renewal date **2026-12-15**, `cs02_at_risk` = **true**, with **5** red signals listed. (CS-02 is Kasterwell's renewal-risk rule; you'll teach it to Genie in notebook 01.)
 # MAGIC 2. **`search_docs(...)`** returns five sections of the Larkspan payer bulletin `PB-LARK-2026-07`, the document that explains a rise in denied claims. You'll ask about it in the workshop.
 # MAGIC
-# MAGIC ![Expected output: the Vellamy snapshot and the matching document sections](./images/00_tools_output.png)
+# MAGIC ![Expected output: the Vellamy snapshot and the matching document sections](./resources/images/00_tools_output.png)
 
 # COMMAND ----------
 
@@ -240,7 +240,7 @@ display(spark.sql(f"SELECT doc_id, title, left(content, 120) AS excerpt FROM {S}
 # MAGIC
 # MAGIC The last cell prints **your values for the workshop**. You don't need to write them down: notebooks 01 and 02 work them out again from your login.
 # MAGIC
-# MAGIC ![Expected output: your values for the workshop](./images/00_values_output.png)
+# MAGIC ![Expected output: your values for the workshop](./resources/images/00_values_output.png)
 # MAGIC
 # MAGIC **Final check:** scroll up. Every code cell should have a green check mark. If one shows a red error, read the *If something goes wrong* table in that step, fix it, and click **Run all** again.
 # MAGIC

@@ -39,7 +39,7 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
-# MAGIC %run ./_config
+# MAGIC %run ./resources/_config
 
 # COMMAND ----------
 
@@ -64,12 +64,12 @@ print(f"Your schema:  {S}\nYour tables:  {', '.join(GENIE_TABLES)}\n\n"
 # MAGIC 1. Right-click **Genie Agents** in the left sidebar and open it in a **new tab**. (It's under **SQL**.)
 # MAGIC 2. Click **New** at the top right.
 # MAGIC
-# MAGIC ![Genie Agents in the sidebar, then New](./images/01_new_genie.png)
+# MAGIC ![Genie Agents in the sidebar, then New](./resources/images/01_new_genie.png)
 # MAGIC
 # MAGIC ### 1b. Choose to pick your tables yourself
 # MAGIC A box asks *"What should your Genie agent do?"*. Skip it: click **Select tables manually** underneath.
 # MAGIC
-# MAGIC ![Click Select tables manually](./images/01_select_tables_manually.png)
+# MAGIC ![Click Select tables manually](./resources/images/01_select_tables_manually.png)
 # MAGIC
 # MAGIC ### 1c. Add your five tables
 # MAGIC 1. In **Connect your data**, click **All**.
@@ -79,7 +79,7 @@ print(f"Your schema:  {S}\nYour tables:  {', '.join(GENIE_TABLES)}\n\n"
 # MAGIC 3. Tick these **five** tables: `appointment_access`, `claims_monthly`, `dim_clinic`, `revenue_monthly`, `tenant_health_weekly`. The bottom of the box should say *Selected:* with 5 tables (2 shown plus **+3**).
 # MAGIC 4. Click **Create manually**.
 # MAGIC
-# MAGIC ![Tick the five tables, then Create manually](./images/01_pick_tables.png)
+# MAGIC ![Tick the five tables, then Create manually](./resources/images/01_pick_tables.png)
 # MAGIC
 # MAGIC > Why only five tables? A Genie Agent works best with a focused set of tables for one business area. These five cover clinics, customer health, claims, appointments and invoices.
 # MAGIC
@@ -89,14 +89,14 @@ print(f"Your schema:  {S}\nYour tables:  {', '.join(GENIE_TABLES)}\n\n"
 # MAGIC 2. Replace the **Name** with **Kasterwell Clinic Ops**. Leave **Default warehouse** as it is: Genie picks one for you (in a free trial it's the *Serverless Starter Warehouse*).
 # MAGIC 3. Click **Save**.
 # MAGIC
-# MAGIC ![Rename the agent, then Save](./images/01_rename.png)
+# MAGIC ![Rename the agent, then Save](./resources/images/01_rename.png)
 # MAGIC
 # MAGIC ### 1e. Paste the starting instructions
 # MAGIC 1. In the right-hand panel, click the **Instructions** tab.
 # MAGIC 2. Click inside the **General Instructions** box and paste the starting instructions printed by the cell above (everything under the *Starting instructions* line).
 # MAGIC 3. Click **Save**.
 # MAGIC
-# MAGIC ![Instructions tab, paste, Save](./images/01_instructions.png)
+# MAGIC ![Instructions tab, paste, Save](./resources/images/01_instructions.png)
 # MAGIC
 # MAGIC 💡 Notice what you *didn't* have to write: Genie already reads the table and column descriptions loaded in notebook 00. Good descriptions are the cheapest way to a good Genie Agent.
 
@@ -107,7 +107,7 @@ print(f"Your schema:  {S}\nYour tables:  {', '.join(GENIE_TABLES)}\n\n"
 # MAGIC
 # MAGIC 1. Under the question box there are two modes: **Agent** and **Chat**. Click **Chat**. Chat answers in one step, usually in under a minute, and it's the mode your agent in notebook 02 uses.
 # MAGIC
-# MAGIC    ![Switch the question box to Chat](./images/01_chat_mode.png)
+# MAGIC    ![Switch the question box to Chat](./resources/images/01_chat_mode.png)
 # MAGIC
 # MAGIC 2. Type this question and press **Enter**:
 # MAGIC
@@ -116,9 +116,9 @@ print(f"Your schema:  {S}\nYour tables:  {', '.join(GENIE_TABLES)}\n\n"
 # MAGIC 3. Wait for **Analysis complete**. The answer looks convincing: a ranked **top 10** with a "risk score" and a chart.
 # MAGIC 4. Click **Show code** on the result table and read the SQL.
 # MAGIC
-# MAGIC ![The before answer: an invented risk score and a top 10](./images/01_before_answer.png)
+# MAGIC ![The before answer: an invented risk score and a top 10](./resources/images/01_before_answer.png)
 # MAGIC
-# MAGIC ![Show code reveals the formula Genie made up](./images/01_before_code.png)
+# MAGIC ![Show code reveals the formula Genie made up](./resources/images/01_before_code.png)
 # MAGIC
 # MAGIC **What just happened?** Kasterwell has a precise definition of renewal risk, but Genie was never told it. So it **invented** its own "risk score" from whatever columns looked relevant, and returned ten clinics. Most of them aren't at risk by Kasterwell's rules, and its numbers for Vellamy (for example 46.8% seat utilization) don't match the playbook's. A new analyst would make the same guess, and nobody would notice unless they read the SQL.
 # MAGIC
@@ -155,18 +155,18 @@ print(f"── 1. Definition (paste at the end of General Instructions) ──\n
 # MAGIC 2. Click at the very **end** of the existing text, press **Enter** twice, and paste the **Definition** printed above.
 # MAGIC 3. Click **Save**.
 # MAGIC
-# MAGIC ![Paste the definition at the end, then Save](./images/01_add_definition.png)
+# MAGIC ![Paste the definition at the end, then Save](./resources/images/01_add_definition.png)
 # MAGIC
 # MAGIC ### 3b. Add the example query
 # MAGIC 1. Open the **Examples** tab. Click **Add**, then **Example query**.
 # MAGIC
-# MAGIC    ![Examples tab, Add, Example query](./images/01_add_example_menu.png)
+# MAGIC    ![Examples tab, Add, Example query](./resources/images/01_add_example_menu.png)
 # MAGIC
 # MAGIC 2. In the title box at the top, paste the **Example question**: `Which clinics are our biggest renewal risk?`
 # MAGIC 3. In the SQL box below it, paste the **Example SQL**.
 # MAGIC 4. Click **Save**. The example now appears in the list, marked **QUERY**.
 # MAGIC
-# MAGIC ![The saved example query](./images/01_example_saved.png)
+# MAGIC ![The saved example query](./resources/images/01_example_saved.png)
 # MAGIC
 # MAGIC ### 3c. Ask again in a new chat
 # MAGIC 1. Click **New chat** (the pencil icon at the top right). A new chat makes sure Genie isn't reusing the earlier answer.
@@ -186,7 +186,7 @@ print(f"── 1. Definition (paste at the end of General Instructions) ──\n
 # MAGIC
 # MAGIC It renews on **2026-12-15**, with **$213,192** of ARR at stake. Click **Show code**: the SQL now matches the playbook.
 # MAGIC
-# MAGIC ![The after answer: Vellamy only, with the playbook's numbers](./images/01_after_answer.png)
+# MAGIC ![The after answer: Vellamy only, with the playbook's numbers](./resources/images/01_after_answer.png)
 
 # COMMAND ----------
 
@@ -215,17 +215,17 @@ print(f"── Benchmark question ──\n{BENCHMARK_QUESTION}\n\n── Ground 
 # MAGIC 3. Paste the **Benchmark question** into **Question**, and the **Ground truth SQL answer** into the box below it. Leave **Evaluation note** empty.
 # MAGIC 4. Click **Add benchmark**.
 # MAGIC
-# MAGIC ![Fill in the question and the ground truth SQL, then Add benchmark](./images/01_benchmark_add.png)
+# MAGIC ![Fill in the question and the ground truth SQL, then Add benchmark](./resources/images/01_benchmark_add.png)
 # MAGIC
 # MAGIC ### 4b. Run it
 # MAGIC 1. Click **Mode: Agent** and choose **Chat**, to test the same mode you've been using.
 # MAGIC 2. Click **Run all benchmarks**. It takes about a minute.
 # MAGIC
-# MAGIC ![Choose Chat mode, then Run all benchmarks](./images/01_benchmark_mode.png)
+# MAGIC ![Choose Chat mode, then Run all benchmarks](./resources/images/01_benchmark_mode.png)
 # MAGIC
 # MAGIC **What you should see:** **100% accurate (1/1)**, with the assessment **Good**. Genie's answer and your ground truth both return Vellamy Family Health.
 # MAGIC
-# MAGIC ![100% accurate, assessment Good](./images/01_benchmark_result.png)
+# MAGIC ![100% accurate, assessment Good](./resources/images/01_benchmark_result.png)
 # MAGIC
 # MAGIC > If it says **Bad**, click the question to compare Genie's SQL with yours. The usual cause is a definition or example that wasn't saved: check the **Instructions** and **Examples** tabs, then click **Start new run**.
 
@@ -248,9 +248,9 @@ print(f"── Benchmark question ──\n{BENCHMARK_QUESTION}\n\n── Ground 
 # MAGIC
 # MAGIC Always click **New chat** after switching, so Genie runs a fresh query.
 # MAGIC
-# MAGIC ![As the West care coordinator: only West, 52 clinics](./images/01_persona_west.png)
+# MAGIC ![As the West care coordinator: only West, 52 clinics](./resources/images/01_persona_west.png)
 # MAGIC
-# MAGIC ![As the Vellamy clinic admin: only Central, 1 clinic](./images/01_persona_vellamy.png)
+# MAGIC ![As the Vellamy clinic admin: only Central, 1 clinic](./resources/images/01_persona_vellamy.png)
 # MAGIC
 # MAGIC Nothing in the Genie Agent changed. The row filter on the tables did the work, and it applies the same way in SQL, dashboards, Genie and the agent you'll build next.
 
@@ -275,14 +275,14 @@ set_persona("billing_analyst")  # back to the default: all 120 clinics
 # MAGIC
 # MAGIC 1. In the Genie Agent, open the **About** tab and scroll to **About this agent**. Copy the **Agent ID**. (It's also the last part of the page address: `.../genie/rooms/<agent id>`.)
 # MAGIC
-# MAGIC    ![The Agent ID is on the About tab](./images/01_agent_id.png)
+# MAGIC    ![The Agent ID is on the About tab](./resources/images/01_agent_id.png)
 # MAGIC
 # MAGIC 2. In the cell below, paste it between the quotes: `GENIE_SPACE_ID = "01f1..."`.
 # MAGIC 3. Run the cell. It asks your Genie Agent the renewal-risk question and prints the answer and the SQL it ran. It also **saves the ID** so notebook 02 can find it.
 # MAGIC
 # MAGIC **What you should see:** an answer naming Vellamy Family Health with the same five signals, then the SQL it ran (the CS-02 query). It takes up to a minute.
 # MAGIC
-# MAGIC ![Expected output: the answer, then the SQL it ran](./images/01_step6_output.png)
+# MAGIC ![Expected output: the answer, then the SQL it ran](./resources/images/01_step6_output.png)
 
 # COMMAND ----------
 
@@ -315,7 +315,7 @@ else:
 # MAGIC | Your tables aren't listed in **Connect your data** | Wrong catalog or schema, or 00_setup didn't finish | Use the schema printed in Step 1; re-run 00_setup if it's empty |
 # MAGIC | The "after" answer still shows a risk score or several clinics | The definition or example wasn't saved, or you asked in the old chat | Check the **Instructions** and **Examples** tabs, then click **New chat** and ask again |
 # MAGIC | Persona doesn't change the answer | You asked in the same chat | Click **New chat** after running a `set_persona` cell |
-# MAGIC | `'WorkspaceClient' object has no attribute 'genie'` | The install or restart cell was skipped | Run the install cell, then the restart cell, then continue from `%run ./_config` |
+# MAGIC | `'WorkspaceClient' object has no attribute 'genie'` | The install or restart cell was skipped | Run the install cell, then the restart cell, then continue from `%run ./resources/_config` |
 # MAGIC | `Paste your Genie Agent id above` | Step 6 has no ID yet | Paste the Agent ID from the **About** tab between the quotes |
 # MAGIC | Behind or stuck | | Run the **Skip the clicks** cell at the bottom: it builds a finished Genie Agent and saves its ID |
 # MAGIC

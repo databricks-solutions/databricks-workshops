@@ -32,7 +32,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./_config
+# MAGIC %run ./resources/_config
 
 # COMMAND ----------
 
@@ -56,12 +56,12 @@ print(f"Your Genie Agent: {GENIE_SPACE_ID}")
 # MAGIC ### 1a. Open the terminal panel
 # MAGIC Click the **terminal icon** (a small `>_` box) near the bottom of the narrow bar on the right edge of this notebook. A **Terminal** panel opens below the notebook. It takes about 10 seconds to start.
 # MAGIC
-# MAGIC ![The terminal icon in the right sidebar](./images/02_open_terminal.png)
+# MAGIC ![The terminal icon in the right sidebar](./resources/images/02_open_terminal.png)
 # MAGIC
 # MAGIC ### 1b. Move it to its own browser tab
 # MAGIC The panel is small. Click the **Start a terminal session in a new tab** icon (a box with an arrow) at the top right of the panel. The terminal opens full size in a new browser tab. You can close the panel in this notebook with the **X**.
 # MAGIC
-# MAGIC ![Open the terminal in a new tab](./images/02_terminal_new_tab.png)
+# MAGIC ![Open the terminal in a new tab](./resources/images/02_terminal_new_tab.png)
 # MAGIC
 # MAGIC When the terminal is ready you'll see *Welcome to the Databricks Web Terminal!* and a prompt ending in `$`. That's where you paste commands.
 # MAGIC
@@ -92,7 +92,7 @@ agentbricks tools add uc-function {S}.search_docs""",
     "C · Memory, sessions and tracing": f"""agentbricks memory bind {MEMORY_STORE}
 agentbricks sessions bind {SESSION_STORE}
 agentbricks tracing bind --experiment-name {TRACE_EXPERIMENT}""",
-    "D · Set its instructions, then look at what you built": f"""python {KIT_DIR}/lab2_customize.py
+    "D · Set its instructions, then look at what you built": f"""python {RESOURCES}/lab2_customize.py
 cat agent.toml""",
     "E · Deploy (3 to 5 minutes the first time)": f"""databricks apps get {APP_NAME} >/dev/null 2>&1 || databricks api delete /api/2.0/agents/runtime-stores/{APP_NAME} >/dev/null 2>&1
 agentbricks deploy {AGENT_NAME}""",
@@ -100,7 +100,7 @@ agentbricks deploy {AGENT_NAME}""",
 for title, cmd in steps.items():
     print(f"# ── {title}\n{cmd}\n")
 print(f"# ── Catch-up (only if you fall behind): steps A to E in one command\n"
-      f"bash {KIT_DIR}/lab2_catchup.sh {AGENT_NAME} {GENIE_SPACE_ID} {S}")
+      f"bash {RESOURCES}/lab2_catchup.sh {AGENT_NAME} {GENIE_SPACE_ID} {S}")
 
 # COMMAND ----------
 
@@ -113,7 +113,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC
 # MAGIC **Expected output:** a green box that starts with **✔ Scaffolded 'agent-langgraph'**, and the prompt changes to `~/<your-agent-name>$` because the last line moved you into the project folder.
 # MAGIC
-# MAGIC ![init creates the project](./images/02_init.png)
+# MAGIC ![init creates the project](./resources/images/02_init.png)
 # MAGIC
 # MAGIC > You can ignore the *Next steps* in that box (`.env`, `agentbricks dev`). They're for running the agent on a laptop. The store names it lists end in a random suffix; Step C replaces them with your own names.
 # MAGIC
@@ -122,7 +122,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC 1. **Built-in recipes:** a sandbox for running code, Unity Catalog functions, Genie One, and **Genie Agents** like the one you built.
 # MAGIC 2. **MCP services** managed by Databricks, such as web search, Slack, GitHub and Google Drive. You won't add these today.
 # MAGIC
-# MAGIC ![tools list shows the kinds of tools you can add](./images/02_tools_list.png)
+# MAGIC ![tools list shows the kinds of tools you can add](./resources/images/02_tools_list.png)
 # MAGIC
 # MAGIC The next four commands add your tools:
 # MAGIC
@@ -135,7 +135,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC
 # MAGIC **Expected output:** four green boxes: **✔ Added clinic_ops**, **✔ Added clinic_snapshot**, **✔ Added my_access** and **✔ Added search_docs**.
 # MAGIC
-# MAGIC ![Four tools added](./images/02_tools_add.png)
+# MAGIC ![Four tools added](./resources/images/02_tools_add.png)
 # MAGIC
 # MAGIC ### C. Turn on memory, sessions and tracing
 # MAGIC - **Memory** stores what the agent learns about each person (your role, your preferences) across conversations.
@@ -144,7 +144,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC
 # MAGIC **Expected output:** three green boxes: **✔ Bound memory store**, **✔ Bound session store** and **✔ Tracing on**. The stores themselves are created when you deploy.
 # MAGIC
-# MAGIC ![Memory, sessions and tracing bound](./images/02_bind.png)
+# MAGIC ![Memory, sessions and tracing bound](./resources/images/02_bind.png)
 # MAGIC
 # MAGIC ### D. Give it instructions and look at what you built
 # MAGIC `lab2_customize.py` writes the agent's **instructions**: what it's for, which tool to use for what, and rules such as *never save patient information*. `cat agent.toml` then prints the settings file.
@@ -153,7 +153,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC - `[memory_store]`, `[session_store]` and `[tracing]` with your names from Step C.
 # MAGIC - Four `[[tools]]` sections, each with **`auth = "user"`**. That means every tool runs **as the person chatting**, so the agent can never see more data than they can. The persona row filters from notebook 01 apply automatically.
 # MAGIC
-# MAGIC ![agent.toml: four tools, each with auth = "user"](./images/02_agent_toml.png)
+# MAGIC ![agent.toml: four tools, each with auth = "user"](./resources/images/02_agent_toml.png)
 # MAGIC
 # MAGIC ### E. Deploy
 # MAGIC The first line is a safety check: if no app with your name exists yet, it removes any storage left behind by an earlier app with the same name. It prints nothing. Then `agentbricks deploy` packages the project as a Databricks App, creates the memory and session stores, and starts the app. The first deploy takes **3 to 5 minutes**; read Step 4 while you wait. Lines scroll by as files upload; that's normal.
@@ -163,7 +163,7 @@ print(f"# ── Catch-up (only if you fall behind): steps A to E in one command
 # MAGIC 2. *Couldn't check the agent answers ... uses a PAT* is a harmless warning: the terminal can't run the CLI's automatic check. Your app is fine.
 # MAGIC 3. The **Traces** link starts with `http://127.0.0.1` and won't open from your browser. Use the **Traces** item in the app instead (Step 5).
 # MAGIC
-# MAGIC ![Deployed: your app URL](./images/02_deployed.png)
+# MAGIC ![Deployed: your app URL](./resources/images/02_deployed.png)
 
 # COMMAND ----------
 
@@ -217,7 +217,7 @@ displayHTML(f'<a href="https://{host}/apps/{APP_NAME}" target="_blank" style="fo
 # MAGIC 3. **The message box.** Type here and press **Enter**. Leave the mode on **Streaming** and the model on the default.
 # MAGIC 4. **Events** shows the raw requests behind the page. You can ignore it.
 # MAGIC
-# MAGIC ![The Agent Bricks Workbench](./images/02_workbench.png)
+# MAGIC ![The Agent Bricks Workbench](./resources/images/02_workbench.png)
 # MAGIC
 # MAGIC > ⏳ **Wait for each answer to finish before you type the next message.** The box stays greyed out while the agent works, and anything you type then is lost. Each answer shows the tool calls the agent made (*Tool request*, *Tool result*) before its reply.
 
@@ -233,7 +233,7 @@ displayHTML(f'<a href="https://{host}/apps/{APP_NAME}" target="_blank" style="fo
 # MAGIC
 # MAGIC **Expected:** a few **remember** tool results (*Remembered in /role.md*, */focus.md*, */preferences.md*; the names can vary), then *Saved. Here's what I'll remember:* with your role, focus and format.
 # MAGIC
-# MAGIC ![The agent saves three memories](./images/02_remember.png)
+# MAGIC ![The agent saves three memories](./resources/images/02_remember.png)
 # MAGIC
 # MAGIC ### F2. Ask a question that needs two tools
 # MAGIC > *Are evening no-shows a problem for our behavioral health clinics, and what does our protocol say?*
@@ -260,7 +260,7 @@ set_persona("care_coordinator_west")
 # MAGIC
 # MAGIC Vellamy is in the Central region. **Expected:** the agent calls **my_access**, then says Vellamy is **outside your access** (you can see 52 of the 120 clinics). It doesn't pretend the clinic doesn't exist, and it doesn't leak its numbers.
 # MAGIC
-# MAGIC ![Vellamy is outside your access](./images/02_access.png)
+# MAGIC ![Vellamy is outside your access](./resources/images/02_access.png)
 # MAGIC
 # MAGIC ### F4. Check that it remembers you
 # MAGIC 1. Click **New session** (top of the Sessions list). The chat clears, so this conversation knows nothing yet.
@@ -282,14 +282,14 @@ set_persona("care_coordinator_west")
 # MAGIC
 # MAGIC > ℹ️ **The Memory panel shows "No memories ... yet". That's a known issue in this CLI preview:** the agent stores memories under an internal id, and the panel looks them up under your email. Your memories are saved; ask the agent, as above, to see them.
 # MAGIC >
-# MAGIC > ![The Memory panel is empty for now](./images/02_memory_empty.png)
+# MAGIC > ![The Memory panel is empty for now](./resources/images/02_memory_empty.png)
 # MAGIC
 # MAGIC ### G2. Make it forget one thing
 # MAGIC > *Please forget that I care about wait times and no-shows.*
 # MAGIC
 # MAGIC **Expected:** a **forget** tool call (*Forgot 1 fact in ...*), then confirmation that the rest (your role and format) is still saved.
 # MAGIC
-# MAGIC ![The agent forgets one fact](./images/02_forget.png)
+# MAGIC ![The agent forgets one fact](./resources/images/02_forget.png)
 # MAGIC
 # MAGIC ### G3. Check
 # MAGIC Click **New session** and ask *What should I focus on this week?* again. It still knows you're a West care coordinator who likes short answers, but its answer is no longer built around wait times and no-shows (it may lead with upcoming renewals instead). That's the "right to be forgotten", done by the person themselves.
@@ -305,7 +305,7 @@ set_persona("care_coordinator_west")
 # COMMAND ----------
 
 print(f"""# ── H · Change and redeploy
-python {KIT_DIR}/lab2_customize.py --add-rule "End every answer with one suggested next step for the user."
+python {RESOURCES}/lab2_customize.py --add-rule "End every answer with one suggested next step for the user."
 agentbricks deploy {AGENT_NAME}""")
 
 # COMMAND ----------
@@ -315,7 +315,7 @@ agentbricks deploy {AGENT_NAME}""")
 # MAGIC
 # MAGIC **Expected:** the answer now ends with **Suggested next step:**.
 # MAGIC
-# MAGIC ![Every answer now ends with a suggested next step](./images/02_rule.png)
+# MAGIC ![Every answer now ends with a suggested next step](./resources/images/02_rule.png)
 
 # COMMAND ----------
 
