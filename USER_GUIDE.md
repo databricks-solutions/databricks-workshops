@@ -46,10 +46,6 @@ workshop in this repository.
 - [geniecode_biopharma_rnd](geniecode_biopharma_rnd/README.md): a lab workspace with Genesis Workbench (GPU model
   serving and its app), serverless GPU, the lab's data in `main` and `dbacademy`, Lakebase, and Genie Code with the
   Vital Skills. It deploys nothing; see its README for what each exercise creates and how to clean up.
-- [agentbricks_genieagent_workshop](agentbricks_genieagent_workshop/README.md): a free trial created with a work
-  email (the Agent Bricks CLI installs from PyPI, and the agent calls a Claude model), the web terminal, Databricks
-  Apps and the Managed MCP Servers preview. It deploys nothing; the notebooks create a schema, a Genie agent and an
-  app, and its README lists how to delete them.
 
 ## Common errors
 
