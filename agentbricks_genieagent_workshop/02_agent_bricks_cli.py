@@ -75,32 +75,53 @@ print(f"Your Genie Agent: {GENIE_SPACE_ID}")
 
 # MAGIC %md
 # MAGIC ## Step 2. Print your commands
-# MAGIC Run the cell below. It prints **your** commands for steps A to E, already filled in with your names, schema and Genie Agent id. You'll copy one block at a time into the terminal in Step 3.
+# MAGIC Run the cells below. They print **your** commands for steps A to E, already filled in with your names, schema and Genie Agent id. You'll copy the commands into the terminal in Step 3.
 
 # COMMAND ----------
 
-steps = {
-    "A · Install the CLI and create your project (about 30 seconds)": f"""cd ~
+# Step A · Install the CLI and create your project (about 30 seconds)
+print(f"""# ── A · Install the CLI and create your project
+cd ~
 pip install -q "databricks-agentbricks==0.9.0"
 agentbricks init {AGENT_NAME}
-cd {AGENT_NAME}""",
-    "B · See what tools you can add, then add yours": f"""agentbricks tools list
+cd {AGENT_NAME}""")
+
+# COMMAND ----------
+
+# Step B · See what tools you can add, then add yours
+print(f"""# ── B · See what tools you can add, then add yours
+agentbricks tools list
 agentbricks tools add genie-agent {GENIE_SPACE_ID} --name clinic_ops
 agentbricks tools add uc-function {S}.clinic_snapshot
 agentbricks tools add uc-function {S}.my_access
-agentbricks tools add uc-function {S}.search_docs""",
-    "C · Memory, sessions and tracing": f"""agentbricks memory bind {MEMORY_STORE}
+agentbricks tools add uc-function {S}.search_docs""")
+
+# COMMAND ----------
+
+# Step C · Memory, sessions and tracing
+print(f"""# ── C · Memory, sessions and tracing
+agentbricks memory bind {MEMORY_STORE}
 agentbricks sessions bind {SESSION_STORE}
-agentbricks tracing bind --experiment-name {TRACE_EXPERIMENT}""",
-    "D · Set its instructions, then look at what you built": f"""python {RESOURCES}/lab2_customize.py
-cat agent.toml""",
-    "E · Deploy (3 to 5 minutes the first time)": f"""databricks apps get {APP_NAME} >/dev/null 2>&1 || databricks api delete /api/2.0/agents/runtime-stores/{APP_NAME} >/dev/null 2>&1
-agentbricks deploy {AGENT_NAME}""",
-}
-for title, cmd in steps.items():
-    print(f"# ── {title}\n{cmd}\n")
-print(f"# ── Catch-up (only if you fall behind): steps A to E in one command\n"
-      f"bash {RESOURCES}/lab2_catchup.sh {AGENT_NAME} {GENIE_SPACE_ID} {S}")
+agentbricks tracing bind --experiment-name {TRACE_EXPERIMENT}""")
+
+# COMMAND ----------
+
+# Step D · Set its instructions, then look at what you built
+print(f"""# ── D · Set its instructions, then look at what you built
+python {RESOURCES}/lab2_customize.py
+cat agent.toml""")
+
+# COMMAND ----------
+
+# Step E · Deploy (3 to 5 minutes the first time)
+print(f"""# ── E · Deploy
+databricks apps get {APP_NAME} >/dev/null 2>&1 || databricks api delete /api/2.0/agents/runtime-stores/{APP_NAME} >/dev/null 2>&1
+agentbricks deploy {AGENT_NAME}""")
+
+# COMMAND ----------
+
+# Catch-up: only if you fall behind. Runs steps A to E in one command
+print(f"bash {RESOURCES}/lab2_catchup.sh {AGENT_NAME} {GENIE_SPACE_ID} {S}")
 
 # COMMAND ----------
 
