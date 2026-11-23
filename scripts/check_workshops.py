@@ -193,10 +193,28 @@ def check_workshop(workshop):
         error(path, "one bundle per workshop, at the workshop folder's root")
 
 
+def check_root_readme():
+    """The root README's Workshops table has a row for every workshop, and no row for a folder that isn't one."""
+    path = os.path.join(ROOT, "README.md")
+    text = open(path).read() if os.path.isfile(path) else ""
+    section = re.search(r"^## Workshops[ \t]*$(.*?)(?=^## |\Z)", text, re.M | re.S)
+    if not section:
+        error("README.md", "needs a `## Workshops` table with a row for every workshop")
+        return
+    # A row's first cell links to the workshop's folder: | [`my_workshop`](my_workshop/) | ... |
+    listed = set(re.findall(r"^\|\s*\[[^\]]*\]\((?:\./)?([\w.-]+)/?\)", section.group(1), re.M))
+    for w in WORKSHOPS:
+        if w not in listed:
+            error("README.md", f"add a row for `{w}` to the Workshops table")
+    for w in sorted(listed - set(WORKSHOPS)):
+        error("README.md", f"the Workshops table links to `{w}/`, which isn't a workshop folder")
+
+
 TRACKED = tracked_files()
 WORKSHOPS = sorted({f.split("/")[0] for f in TRACKED if "/" in f and not f.startswith(".")} - NOT_WORKSHOPS)
 for w in WORKSHOPS:
     check_workshop(w)
+check_root_readme()
 for path in TRACKED:
     if "/" not in path and os.path.getsize(os.path.join(ROOT, path)) > MAX_FILE_MB * 1024 * 1024:
         error(path, f"larger than {MAX_FILE_MB} MB")
