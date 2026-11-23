@@ -7,8 +7,9 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before you change anything. The rules th
 
 - Work only inside the workshop folder you were asked to change. Never edit another workshop's files.
 - Change root files (`README.md`, `CONTRIBUTING.md`, `USER_GUIDE.md`, this file, `LICENSE`, `NOTICE`, `SECURITY.md`,
-  `scripts/`, `.github/`) only when asked. A rule change updates `CONTRIBUTING.md`, this file,
-  `scripts/check_workshops.py` and `.github/pull_request_template.md` together.
+  `scripts/`, `.github/`) only when asked. The exception: a new or renamed workshop adds its own row to the root
+  README's Workshops table and, if it needs more than Free Edition, its own entry in `USER_GUIDE.md`. A rule change
+  updates `CONTRIBUTING.md`, this file, `scripts/check_workshops.py` and `.github/pull_request_template.md` together.
 - Names: `bundle.name` equals the folder name; no `mode:` on any target; `presets.name_prefix: "[<folder>] "` and
   `presets.tags.workshop: <folder>`; code writes only inside `<folder>_*` schemas.
 - One click, no input: every variable has a default; the only lookup is `warehouse: Serverless Starter Warehouse`;

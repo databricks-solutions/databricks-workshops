@@ -8,6 +8,7 @@ This repository contains a collection of Databricks workshops designed for direc
 | Workshop | What it is | How to run it |
 |---|---|---|
 | [`dbsql_workshop`](dbsql_workshop/) | Bean & Brew Coffee Co.: Databricks SQL on a fictional coffee chain, from raw data to a dashboard, a Genie agent and alerts | **Open in Databricks** button in its README |
+| [`geniecode_biopharma_rnd`](geniecode_biopharma_rnd/) | Genie Code for biopharma R&D: exercises from the Databricks and NVIDIA workshop, from small-molecule screening to variant calling | A prepared lab workspace (see its README), then `exercises/SETUP.md` |
 | [`v2v`](v2v/) | Vibing to Value: the guide for the hands-on build day in the Databricks Seattle office on 2026-11-17 | Open the notebook `Vibing_to_Value_Seattle.py` |
 
 

@@ -24,7 +24,7 @@ uv run --no-project --with pyyaml python scripts/check_workshops.py
 - A `README.md` with: what the deploy creates, how to run the workshop, a `## Tear down` section, and under
   `## How to get help` the support disclaimer the check looks for: "Databricks support does not cover this content.
   For questions or bugs, open a GitHub issue. The team will help on a best effort basis."
-- A row for the workshop in the **Workshops** table of the root [README.md](README.md).
+- A row for the workshop in the **Workshops** table of the root [README.md](README.md). The check fails without it.
 - Notebooks in **source format**: `.py` or `.sql` files that start with `# Databricks notebook source` (or
   `-- Databricks notebook source`). No `.ipynb`: they're JSON, unreadable in review and in diffs.
 - No file over 5 MB. Open in Databricks clones the whole repository with a 3-minute limit, so generate data in SQL
