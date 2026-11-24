@@ -1,9 +1,10 @@
 # Bean & Brew Coffee Co.: Databricks SQL demo
 
 Bean & Brew is a fictional chain of 12 coffee shops in four regions, with data from January 2025 to "today",
-2026-10-19. Raw register data becomes governed tables, metric views, an AI/BI dashboard, a Genie agent and SQL alerts.
+2026-10-19. The deploy loads a governed silver layer; you build gold in SQL, including a model built with AI functions
+on free-text customer comments, then use it through metric views, an AI/BI dashboard, a Genie agent and SQL alerts.
 
-Six stories are built into the data:
+Seven stories are built into the data:
 
 | | Scenario | Where it shows |
 |---|---|---|
@@ -13,42 +14,43 @@ Six stories are built into the data:
 | (d) | RiNo, Denver, opens 2026-03-01 and isn't a comp store yet | Query 03, Genie |
 | (e) | Cold-drink sales roughly quadruple from May to August | Query 04, dashboard |
 | (f) | Pumpkin Spice Latte sells only from September to November | Query 04, Genie |
+| (g) | Customers at S007 report the drive-thru lane closed for construction; S004 and S008 customers report no oat milk | `feedback_insights`, query 09, Genie |
+
+The notebook `Bean & Brew DBSQL Workshop` walks through every step, including the clicks for the steps that happen
+outside it.
 
 ## 0. Connect
 
-Finds the catalog the bundle deployed into and makes it the session default.
+Attach the **Serverless Starter Warehouse** and run the Connect cell: it finds the catalog the bundle deployed into.
 
-## 1. Bronze
+## 1. Compute
 
-Six raw tables, about 1.5M register tickets, with deliberate defects: re-sent duplicate tickets, lower-case store IDs,
-line items as JSON text, timestamps as text. Raw data stays unchanged, so every number traces back to its source.
+**SQL Warehouses → Serverless Starter Warehouse.** Serverless starts in seconds and bills only while it runs. Size sets
+the speed of each query, scaling (min and max clusters) sets how many run at once, auto-stop ends idle time.
+**Monitoring** shows load over time; **Connection details** has what BI tools connect with. **Create SQL warehouse**
+shows every option; cancel it.
 
-## 2. Silver
+## 2. Catalog
 
-Fills the cleaned tables: types cast, IDs normalized, duplicates removed, JSON line items exploded, voided tickets
-excluded. The keys were declared at deploy, and `INSERT OVERWRITE ... BY NAME` keeps them, so cells are safe to re-run.
-In **Catalog**, `fact_transactions` → **Lineage** shows the path from bronze to gold.
+**Catalog → `dbsql_workshop_silver`.** Typed, deduplicated tables with descriptions, primary and foreign keys, and tags
+(email is tagged `contains_pii`). **Details** shows Predictive Optimization maintaining the tables. `customer_feedback`
+holds free-text comments. Gold exists, empty.
 
-## 3. Gold
+## 3. Build gold
 
-Six tables at the grain business questions are asked: store-day, product-day, store-hour, current inventory, member,
-and the promo list. Net sales reconcile to the cent across silver and three gold grains. The dashboard and Genie now
-have data.
+Five models at the grain business questions are asked: store-day, product-day, store-hour, current inventory and member.
+A sixth, `feedback_insights`, reads 28 days of comments with `ai_analyze_sentiment`, `ai_classify` and `ai_extract`
+(about 100 rows, about a minute). `INSERT OVERWRITE ... BY NAME` fills the deployed tables, so the dashboard, Genie and
+the alerts have data as soon as it finishes. Any statement also runs in the **SQL Editor**, where Genie Code can explain
+it.
 
-## 4. Semantic layer and governance
+## 4. Test gold
 
-- **Metric views** define each KPI once (average ticket = `SUM(net_sales) / SUM(transactions)`), and `MEASURE()`
-  recalculates it correctly at any grouping. Synonyms ("revenue", "AOV") help Genie.
-- **Keys** tell Genie and the metric views how tables join.
-- **Comments and tags** document the columns, classify layers and owners, and flag email as PII. If governed tag
-  policies reject the tags, skip that cell.
+Net sales reconcile to the cent across silver and three gold grains, every scenario holds, and a fingerprint of the
+deterministic tables matches the reference build. The AI test is informational. A failure stops the notebook;
+re-running Step 3 fixes it.
 
-## 5. Validate
-
-Checks the cleanup, the reconciliation, every scenario and a data fingerprint, and stops the notebook if anything
-failed. Re-running Steps 2 and 3 fixes a failure.
-
-## 6. Modern SQL
+## 5. Query gold
 
 | Query | Shows |
 |---|---|
@@ -60,48 +62,46 @@ failed. Re-running Steps 2 and 3 fixes a failure.
 | 06 | 7-day moving average: (a) |
 | 07 | The inventory alert's query: (b) |
 | 08 | `QUALIFY`, and `ai_query()` classifying five menu items |
-| 09 | Data quality, bronze vs silver |
+| 09 | `ai_summarize()` over this week's S007 comments: (g) |
 
-Any of them runs in the SQL editor too: attach the same warehouse, and pick the deployed catalog if it isn't the
-default. Query 08 selects its five rows before calling `databricks-gpt-oss-20b`, one call per row; if that model isn't
-served, use one listed under **Serving**.
+In the **SQL Editor**: chart query 02, run it twice to hit the result cache, then open its query profile from
+**Query History**. Query 08 calls `databricks-gpt-oss-20b`, one call per row on five rows; if that model isn't served, use one
+listed under **Serving**.
 
-## 7. Dashboard, Genie, alerts
+## 6. Metric views
 
-All three are named `[dbsql_workshop] ...`: search the workspace for that prefix.
+**Catalog → `dbsql_workshop_gold` → `store_sales_metrics`.** Each KPI is defined once (average ticket =
+`SUM(net_sales) / SUM(transactions)`), and `MEASURE()` recalculates it correctly at any grouping. Synonyms ("revenue",
+"AOV") help Genie. **Lineage** runs from silver through gold to the dashboard.
 
-- **Dashboard:** four pages on the metric views: Executive Overview, Products & Dayparts, Operations, Loyalty. Find the
-  S007 dip on Operations, then ask Genie why.
-- **Genie:** instructions carry the business rules (today is 2026-10-19, comp stores, the 30% labor target,
-  REORDER NOW, the price increase), plus worked examples, value matching and four benchmarks. Every answer shows its
-  SQL. Try:
-  - What were net sales by region last month?
-  - Which stores need to reorder inventory right now?
-  - What are the busiest hours at Pike Place on Saturdays?
-  - How did average ticket at comp stores change after the January 2026 price increase?
-  - Why is traffic down at the Phoenix Downtown Drive-Thru this week? Then: break it down by order channel.
-  - Which stores are over the 30% labor target in the last 28 days?
-- **Alerts:** inventory below reorder point, store traffic drop, labor cost over 30%. All three fire on this data.
-  They're weekly and created paused; resuming one emails the deployer.
+## 7. Dashboard
 
-## 8. Visual data prep (optional)
+**Dashboards → `[dbsql_workshop] Bean & Brew Coffee Co - Store Operations`.** Four pages on the metric views: Executive
+Overview, Products & Dayparts, Operations, Loyalty. Find the S007 dip on Operations, then ask Genie why.
 
-Builds the promo list without code:
+## 8. Genie
 
-1. **New → Visual data prep**, saved in your home folder.
-2. Sources `dbsql_workshop_gold.customer_360` and `dbsql_workshop_silver.dim_store`, joined on
-   `home_store_id = store_id`.
-3. Filter to Champion and Loyal Regular members in the Gold and Reserve tiers.
-4. Add `promo_offer`: `Free Nitro Upgrade` for "Cold Brew" favorites, `Free Oat Milk Swap` for "Latte",
-   otherwise `$2 Off Pastry`.
+**Genie → `[dbsql_workshop] Bean & Brew Coffee Ops Genie`.** Instructions carry the business rules (today is 2026-10-19,
+comp stores, the 30% labor target, REORDER NOW, the price increase, where the customer feedback is), plus worked
+examples, value matching and four benchmarks. Every answer shows its SQL. Try:
 
-The result matches `dbsql_workshop_gold.loyalty_promo_targets`. Delete the flow afterwards: it isn't part of the bundle.
+- Why is traffic down at the Phoenix Downtown Drive-Thru this week? (Agent mode.) Then: break it down by order channel.
+- What are customers saying about the Phoenix Downtown Drive-Thru this week?
+- Which stores need to reorder inventory right now?
+- What are the busiest hours at Pike Place on Saturdays?
+- How did average ticket at comp stores change after the January 2026 price increase?
+- Which stores are over the 30% labor target in the last 28 days?
 
-## 9. Tear down
+## 9. Alerts
 
-**Deployments → Destroy** (or `databricks bundle destroy`) removes the schemas, the setup job, the dashboard, the
-Genie agent and the alerts. Delete by hand the Step 8 flow, any saved queries and the Git folder. The catalog and the
-warehouse stay.
+**Alerts → `[dbsql_workshop] Bean & Brew - ...`.** Inventory below reorder point, store traffic drop, labor cost over
+30%. All three fire on this data. They're weekly and created paused; resuming one emails the deployer.
+
+## 10. Tear down
+
+**Deployments → Destroy** (or `databricks bundle destroy`) removes the schemas, the setup job, the dashboard, the Genie
+agent and the alerts. Delete by hand any saved SQL editor queries and the Git folder. The catalog and the warehouse
+stay.
 
 ## Extras (admin)
 
@@ -123,9 +123,9 @@ warehouse stay.
 
 | Symptom | Fix |
 |---|---|
-| The dashboard or Genie is empty | Run Steps 2 and 3 |
-| A validation check fails | Re-run Steps 2 and 3 |
-| The tags cell fails | Skip it |
+| The dashboard or Genie is empty | Run Step 3 |
+| A test fails | Re-run Step 3 |
+| The AI model cell fails | AI Functions aren't available in your region: skip the cell, the rest works |
 | Query 08 can't find its model | Use a model listed under **Serving** |
 | An alert doesn't fire | It starts paused: resume it |
 | Something was changed or deleted | Destroy, deploy again, re-run the notebook |
