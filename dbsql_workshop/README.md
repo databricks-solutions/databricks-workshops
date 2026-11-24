@@ -1,6 +1,6 @@
 # Bean & Brew Coffee Co.: Databricks SQL workshop in a box
 
-[![Open in Databricks](https://www.databricks.com/open-in-databricks.png)](https://login.databricks.com/signin?destination_url=%2Fopen%3Fp%3DeyJhY3Rpb24iOiJpbXBvcnRkYWIiLCJwYXlsb2FkIjp7ImdpdFVybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9kYXRhYnJpY2tzLXNvbHV0aW9ucy9kYXRhYnJpY2tzLXdvcmtzaG9wcyIsInN1YmRpciI6ImRic3FsX3dvcmtzaG9wIn19)
+[![Open in Databricks](https://www.databricks.com/open-in-databricks.png)](https://login.databricks.com/signin?destination_url=%2Fopen%3Fp%3DeyJhY3Rpb24iOiJpbXBvcnRkYWIiLCJwYXlsb2FkIjp7ImdpdFVybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9kYXRhYnJpY2tzLXNvbHV0aW9ucy9kYXRhYnJpY2tzLXdvcmtzaG9wcyIsInN1YmRpciI6ImRic3FsX3dvcmtzaG9wIn19&utm_source=1m-workshop&utm_medium=dab&utm_campaign=dbsql_workshop&utm_content=readme)
 
 A Databricks SQL workshop built around a fictional 12-store coffee chain. The deploy loads a governed silver layer and
 sets up the analytics assets on an empty gold layer. Participants tour the SQL warehouse and the catalog, build gold in

@@ -15,7 +15,7 @@ include:
 variables:
   catalog:
     description: >-
-      Existing Unity Catalog catalog for the demo. The bundle creates (and destroy drops) only its own three
+      Existing Unity Catalog catalog for the demo. The bundle creates (and destroy drops) only its own two
       schemas in it; the catalog itself is never changed. Defaults to `workspace`, the default catalog in Databricks
       Free Edition.
     # No `workspace` catalog in your workspace? Replace it below with a catalog you can create schemas in, then deploy
