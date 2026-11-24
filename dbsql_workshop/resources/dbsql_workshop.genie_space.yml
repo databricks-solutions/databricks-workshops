@@ -1,5 +1,5 @@
 # Genie agent: instructions, worked examples, SQL snippets, joins, starter questions and benchmarks.
-# Genie needs its tables to exist, so it's created after the setup run (they're empty until the notebook runs).
+# Genie needs its tables to exist, so it's created after the setup run (gold is empty until the workshop notebook builds it).
 resources:
   genie_spaces:
     dbsql_workshop_coffee_ops:
@@ -56,6 +56,12 @@ resources:
                 "question": [
                   "What are the busiest hours at Pike Place on Saturdays?"
                 ]
+              },
+              {
+                "id": "0000000000000000000000000000001d",
+                "question": [
+                  "What are customers saying about the Phoenix Downtown Drive-Thru this week?"
+                ]
               }
             ]
           },
@@ -76,6 +82,31 @@ resources:
                   },
                   {
                     "column_name": "loyalty_tier",
+                    "enable_format_assistance": true,
+                    "enable_entity_matching": true
+                  }
+                ]
+              },
+              {
+                "identifier": "${var.catalog}.${resources.schemas.dbsql_workshop_gold.name}.feedback_insights",
+                "column_configs": [
+                  {
+                    "column_name": "product_mentioned",
+                    "enable_format_assistance": true,
+                    "enable_entity_matching": true
+                  },
+                  {
+                    "column_name": "sentiment",
+                    "enable_format_assistance": true,
+                    "enable_entity_matching": true
+                  },
+                  {
+                    "column_name": "store_name",
+                    "enable_format_assistance": true,
+                    "enable_entity_matching": true
+                  },
+                  {
+                    "column_name": "topic",
                     "enable_format_assistance": true,
                     "enable_entity_matching": true
                   }
@@ -259,7 +290,9 @@ resources:
                   "\n",
                   "A menu price increase of about 5% took effect on 2026-01-05. For price-change questions, compare comp-store Average Ticket before and after that date (see the price-increase filter). The rise in average ticket each summer comes from the mix of higher-priced cold drinks, not a price change.\n",
                   "\n",
-                  "Weeks start on Monday. \"Last week\" means 2026-10-13 to 2026-10-19 and \"prior week\" means 2026-10-06 to 2026-10-12. The Downtown Drive-Thru store in Phoenix has had sharply lower traffic since 2026-10-15."
+                  "Weeks start on Monday. \"Last week\" means 2026-10-13 to 2026-10-19 and \"prior week\" means 2026-10-06 to 2026-10-12. The Downtown Drive-Thru store in Phoenix has had sharply lower traffic since 2026-10-15.\n",
+                  "\n",
+                  "feedback_insights holds customer comments from 2026-09-22 to 2026-10-19, enriched with AI functions: sentiment, topic, product_mentioned and issue. For why questions about a store's traffic, sales or stock, also check what customers said in feedback_insights for that store and period, and quote one or two comments."
                 ]
               }
             ],

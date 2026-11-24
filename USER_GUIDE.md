@@ -17,7 +17,7 @@ Set by a workspace admin. All are on by default in Free Edition and trial worksp
 | Serverless compute | Open in Databricks deploys bundles on serverless; workshops run on serverless notebooks and SQL warehouses | **Compute → SQL warehouses** offers a serverless warehouse |
 | Git folders, with github.com allowed | Open in Databricks clones this repository into your workspace | **Workspace → Create → Git folder** accepts `https://github.com/databricks-solutions/databricks-workshops` |
 | Databricks SQL, AI/BI dashboards, Genie, SQL alerts | Workshops that deploy these assets | **SQL editor**, **Dashboards**, **Genie** and **Alerts** appear in the sidebar |
-| Foundation Model APIs (pay-per-token) in your region | Workshops that call `ai_query()` | **Serving** lists endpoints named `databricks-...` |
+| Foundation Model APIs (pay-per-token) in your region | Workshops that call AI Functions (`ai_query()`, `ai_extract()`, `ai_classify()`, ...) | **Serving** lists endpoints named `databricks-...` |
 
 ## Your permissions
 
@@ -57,6 +57,7 @@ workshop in this repository.
 | `PERMISSION_DENIED` on `CREATE SCHEMA` | You lack `CREATE SCHEMA` on the catalog | Ask the catalog owner for `USE CATALOG` and `CREATE SCHEMA`, or choose another catalog |
 | A tag statement fails with a policy error | Your account has governed tag policies | Skip the tags cell; nothing later depends on it |
 | `ai_query()` can't find the endpoint | That model isn't served in your region or edition | Replace the endpoint name in the query with one listed under **Serving** |
+| An AI Function (`ai_extract()`, `ai_classify()`, ...) isn't available | AI Functions aren't offered in your workspace's region | Skip that cell; the workshop's README says what depends on it |
 
 If the automatic deploy fails after Open in Databricks, the repository is still cloned. Fix the cause, then open the
 workshop's `databricks.yml`, click the **Deployments** icon and deploy again.

@@ -1,10 +1,11 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC # Bean & Brew setup 2 of 2: create the silver and gold tables and the metric views
+-- MAGIC # Bean & Brew setup 1 of 3: create the silver and gold tables and the metric views
 -- MAGIC
--- MAGIC Runs during `databricks bundle deploy`, after the raw data load. It creates every silver and gold table **empty**, with
--- MAGIC its comment and its primary and foreign keys, then the three metric views on top of them. The AI/BI dashboard, the
--- MAGIC Genie agent and the alerts are created next, and they need these tables to exist. The workshop notebook fills them.
+-- MAGIC Runs during `databricks bundle deploy`, as the first task of the bundle's setup job, on the SQL warehouse. It creates
+-- MAGIC every silver and gold table **empty**, with its comment and its primary and foreign keys, then the three metric views on
+-- MAGIC top of them. The next task loads silver. The AI/BI dashboard, the Genie agent and the alerts are created after the
+-- MAGIC setup job, and they need these tables to exist. The workshop notebook fills gold.
 -- MAGIC
 -- MAGIC Tables that already exist are left as they are, so redeploying never loses data. The metric views are replaced, so a
 -- MAGIC changed definition takes effect on the next deploy.
@@ -32,7 +33,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.dim_store (
   longitude DOUBLE,
   CONSTRAINT pk_dim_store PRIMARY KEY (store_id)
 )
-COMMENT 'Conformed store dimension for Bean & Brew Coffee Co. One row per store location with typed attributes. Source: bronze.raw_stores.';
+COMMENT 'Conformed store dimension for Bean & Brew Coffee Co. One row per store location with typed attributes. Source: store master extract.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.dim_product (
   product_id STRING NOT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.dim_product (
   is_beverage BOOLEAN,
   CONSTRAINT pk_dim_product PRIMARY KEY (product_id)
 )
-COMMENT 'Conformed product/menu dimension. One row per sellable SKU with 2025 list price, standard unit cost, and standard margin. Source: bronze.raw_products.';
+COMMENT 'Conformed product/menu dimension. One row per sellable SKU with 2025 list price, standard unit cost, and standard margin. Source: POS menu extract.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.dim_loyalty_member (
   member_id STRING NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.dim_loyalty_member (
   CONSTRAINT pk_dim_loyalty_member PRIMARY KEY (member_id),
   CONSTRAINT fk_member_home_store FOREIGN KEY (home_store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id)
 )
-COMMENT 'Cleaned Bean & Brew Rewards loyalty member dimension. Emails lower-cased, home store IDs normalized, dates typed. Source: bronze.raw_loyalty_members.';
+COMMENT 'Cleaned Bean & Brew Rewards loyalty member dimension. Emails lower-cased, home store IDs normalized, dates typed. Source: loyalty CRM extract.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_transactions (
   transaction_id STRING NOT NULL,
@@ -87,7 +88,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_transactions (
   CONSTRAINT fk_txn_store FOREIGN KEY (store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id),
   CONSTRAINT fk_txn_member FOREIGN KEY (loyalty_member_id) REFERENCES dbsql_workshop_silver.dim_loyalty_member(member_id)
 )
-COMMENT 'Cleaned POS ticket (transaction header) fact. One row per unique ticket, including voided tickets (flagged). Totals rolled up from line items; sales tax applied by store state. Sources: bronze.raw_pos_transactions, silver.fact_sales_line_items, silver.dim_store.';
+COMMENT 'Cleaned POS ticket (transaction header) fact. One row per unique ticket, including voided tickets (flagged). Totals rolled up from line items; sales tax applied by store state. Sources: POS ticket feed, silver.fact_sales_line_items, silver.dim_store.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_sales_line_items (
   line_item_id STRING NOT NULL,
@@ -112,7 +113,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_sales_line_items (
   CONSTRAINT fk_line_product FOREIGN KEY (product_id) REFERENCES dbsql_workshop_silver.dim_product(product_id),
   CONSTRAINT fk_line_store FOREIGN KEY (store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id)
 )
-COMMENT 'Cleaned POS line-item fact. One row per completed ticket line. Duplicate POS re-sends removed, voided tickets excluded, JSON payload exploded, prices resolved from the active price book, promo discounts applied. Sources: bronze.raw_pos_transactions, silver.dim_product.';
+COMMENT 'Cleaned POS line-item fact. One row per completed ticket line. Duplicate POS re-sends removed, voided tickets excluded, JSON payload exploded, prices resolved from the active price book, promo discounts applied. Sources: POS ticket feed, silver.dim_product.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_inventory_daily (
   store_id STRING,
@@ -128,7 +129,7 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_inventory_daily (
   is_below_reorder_point BOOLEAN,
   CONSTRAINT fk_inv_store FOREIGN KEY (store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id)
 )
-COMMENT 'Cleaned end-of-day inventory position per store and stock item, with valuation and reorder flag. Source: bronze.raw_inventory_counts.';
+COMMENT 'Cleaned end-of-day inventory position per store and stock item, with valuation and reorder flag. Source: back-of-house inventory counts.';
 
 CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_labor_daily (
   store_id STRING,
@@ -140,7 +141,19 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.fact_labor_daily (
   labor_cost DECIMAL(12,2),
   CONSTRAINT fk_labor_store FOREIGN KEY (store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id)
 )
-COMMENT 'Cleaned daily labor fact per store from the WFM system, with computed labor cost. Source: bronze.raw_labor_shifts.';
+COMMENT 'Cleaned daily labor fact per store from the WFM system, with computed labor cost. Source: workforce management (WFM) export.';
+
+CREATE TABLE IF NOT EXISTS dbsql_workshop_silver.customer_feedback (
+  feedback_id STRING NOT NULL,
+  store_id STRING,
+  submitted_date DATE,
+  channel STRING,
+  rating INT,
+  comment STRING,
+  CONSTRAINT pk_customer_feedback PRIMARY KEY (feedback_id),
+  CONSTRAINT fk_feedback_store FOREIGN KEY (store_id) REFERENCES dbsql_workshop_silver.dim_store(store_id)
+)
+COMMENT 'Customer feedback: free-text comments from app reviews and receipt surveys, with a 1-5 star rating. One row per comment. Unstructured text, enriched with AI functions in gold.feedback_insights. Source: customer feedback platform export.';
 
 -- COMMAND ----------
 
@@ -240,19 +253,21 @@ CREATE TABLE IF NOT EXISTS dbsql_workshop_gold.customer_360 (
 )
 COMMENT 'Gold: one row per Bean & Brew Rewards member with lifetime value, visit frequency, recency, favorite store/product, and value segment (Champion = top 10% by lifetime spend, Loyal Regular = next 30%, Occasional = next 40%, Light = bottom 20%). Sources: silver.dim_loyalty_member, silver.fact_transactions, silver.fact_sales_line_items, silver.dim_product.';
 
-CREATE TABLE IF NOT EXISTS dbsql_workshop_gold.loyalty_promo_targets (
-  member_id STRING,
-  first_name STRING,
-  loyalty_tier STRING,
-  customer_segment STRING,
-  lifetime_net_sales DECIMAL(32,2),
-  visits BIGINT,
-  favorite_product STRING,
+CREATE TABLE IF NOT EXISTS dbsql_workshop_gold.feedback_insights (
+  feedback_id STRING NOT NULL,
+  store_id STRING,
   store_name STRING,
-  region STRING,
-  promo_offer STRING
+  submitted_date DATE,
+  channel STRING,
+  rating INT,
+  comment STRING,
+  sentiment STRING,
+  topic STRING,
+  product_mentioned STRING,
+  issue STRING,
+  CONSTRAINT pk_feedback_insights PRIMARY KEY (feedback_id)
 )
-COMMENT 'Gold: loyalty promo target list. Champion and Loyal Regular members in the Gold or Reserve tier, with an offer based on their favorite product.';
+COMMENT 'Gold: customer comments from the last 28 days (2026-09-22 to 2026-10-19), enriched in SQL with AI functions: sentiment (ai_analyze_sentiment), topic (ai_classify), and the product mentioned and the issue (ai_extract). Use it to explain why a store metric changed. Source: silver.customer_feedback, silver.dim_store.';
 
 -- COMMAND ----------
 
