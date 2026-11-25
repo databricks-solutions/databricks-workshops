@@ -1,0 +1,5 @@
+# Presenter-only material: never commit
+presenter/
+
+# Python bytecode
+__pycache__/
